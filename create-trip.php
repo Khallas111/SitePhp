@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/src/functions.php';
+
 $departureAgency = '';
 $arrivalAgency = '';
 $totalSeatsInput = '';
@@ -13,37 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $arrivalAgency = trim($_POST['arrivalAgency'] ?? '');
     $totalSeatsInput = trim($_POST['totalSeats'] ?? '');
 
-    if ($departureAgency === '') {
-        $errors[] = 'L’agence de départ est obligatoire.';
-    }
-
-    if ($arrivalAgency === '') {
-        $errors[] = 'L’agence d’arrivée est obligatoire.';
-    }
-
-    if (
-        $departureAgency !== ''
-        && $arrivalAgency !== ''
-        && $departureAgency === $arrivalAgency
-    ) {
-        $errors[] = 'Les agences de départ et d’arrivée doivent être différentes.';
-    }
-
-    if ($totalSeatsInput === '') {
-        $errors[] = 'Le nombre total de places est obligatoire.';
-    } elseif (!ctype_digit($totalSeatsInput)) {
-        $errors[] = 'Le nombre total de places doit être un nombre entier.';
-    } elseif ((int) $totalSeatsInput < 1) {
-        $errors[] = 'Le nombre total de places doit être supérieur à zéro.';
-    }
+    $errors = validateTrip(
+        $departureAgency,
+        $arrivalAgency,
+        $totalSeatsInput
+    );
 
     if ($errors === []) {
         $totalSeats = (int) $totalSeatsInput;
         $successMessage = 'Le formulaire est valide.';
-
-        $departureAgency = '';
-        $arrivalAgency = '';
-        $totalSeatsInput = '';
     }
 }
 
@@ -64,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <?php if ($successMessage !== ''): ?>
         <p>
-            <?= htmlspecialchars($successMessage) ?>
+            <?= escape($successMessage) ?>
         </p>
     <?php endif; ?>
 
@@ -75,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul>
                 <?php foreach ($errors as $error): ?>
                     <li>
-                        <?= htmlspecialchars($error) ?>
+                        <?= escape($error) ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -86,8 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <label for="departureAgency">Agence de départ</label>
 
-            <input type="text" id="departureAgency" name="departureAgency"
-                value="<?= htmlspecialchars($departureAgency) ?>" required>
+            <input type="text" id="departureAgency" name="departureAgency" value="<?= escape($departureAgency) ?>"
+                required>
 
 
         </div>
@@ -95,15 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div>
             <label for="arrivalAgency">Agence d’arrivée</label>
 
-            <input type="text" id="arrivalAgency" name="arrivalAgency" value="<?= htmlspecialchars($arrivalAgency) ?>"
-                required>
+            <input type="text" id="arrivalAgency" name="arrivalAgency" value="<?= escape($arrivalAgency) ?>" required>
         </div>
 
         <div>
             <label for="totalSeats">Nombre total de places</label>
 
-            <input type="number" id="totalSeats" name="totalSeats" min="1"
-                value="<?= htmlspecialchars($totalSeatsInput) ?>" required>
+            <input type="number" id="totalSeats" name="totalSeats" min="1" value="<?= escape($totalSeatsInput) ?>"
+                required>
         </div>
 
         <button type="submit">
