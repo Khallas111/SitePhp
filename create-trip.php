@@ -7,6 +7,8 @@ require_once __DIR__ . '/src/functions.php';
 $departureAgency = '';
 $arrivalAgency = '';
 $totalSeatsInput = '';
+$departureDateInput = '';
+$arrivalDateInput = '';
 $errors = [];
 $successMessage = '';
 
@@ -14,11 +16,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $departureAgency = trim($_POST['departureAgency'] ?? '');
     $arrivalAgency = trim($_POST['arrivalAgency'] ?? '');
     $totalSeatsInput = trim($_POST['totalSeats'] ?? '');
+    $departureDateInput = trim($_POST['departureDate'] ?? '');
+    $arrivalDateInput = trim($_POST['arrivalDate'] ?? '');
 
     $errors = validateTrip(
         $departureAgency,
         $arrivalAgency,
-        $totalSeatsInput
+        $totalSeatsInput,
+        $departureDateInput,
+        $arrivalDateInput
     );
 
     if ($errors === []) {
@@ -77,7 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <input type="text" id="arrivalAgency" name="arrivalAgency" value="<?= escape($arrivalAgency) ?>" required>
         </div>
+        <div>
+            <label for="departureDate">Date et heure de départ</label>
 
+            <input type="datetime-local" id="departureDate" name="departureDate"
+                value="<?= escape($departureDateInput) ?>" required>
+        </div>
+
+        <div>
+            <label for="arrivalDate">Date et heure d’arrivée</label>
+
+            <input type="datetime-local" id="arrivalDate" name="arrivalDate" value="<?= escape($arrivalDateInput) ?>"
+                required>
+        </div>
         <div>
             <label for="totalSeats">Nombre total de places</label>
 

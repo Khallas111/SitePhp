@@ -11,6 +11,27 @@ function escape(string $value): string
 }
 
 /**
+ * Transforme une valeur provenant d’un champ datetime-local en date PHP.
+ */
+function parseDateTimeLocal(string $value): ?DateTimeImmutable
+{
+    $date = DateTimeImmutable::createFromFormat(
+        '!Y-m-d\TH:i',
+        $value
+    );
+
+    if ($date === false) {
+        return null;
+    }
+
+    if ($date->format('Y-m-d\TH:i') !== $value) {
+        return null;
+    }
+
+    return $date;
+}
+
+/**
  * Vérifie les données principales d’un trajet.
  *
  * @return list<string> Liste des messages d’erreur.
@@ -18,7 +39,9 @@ function escape(string $value): string
 function validateTrip(
     string $departureAgency,
     string $arrivalAgency,
-    string $totalSeatsInput
+    string $totalSeatsInput,
+    string $departureDateInput,
+    string $arrivalDateInput
 ): array {
     $errors = [];
 
@@ -44,6 +67,37 @@ function validateTrip(
         $errors[] = 'Le nombre total de places doit être un nombre entier.';
     } elseif ((int) $totalSeatsInput < 1) {
         $errors[] = 'Le nombre total de places doit être supérieur à zéro.';
+    }
+
+    $departureDate = null;
+    $arrivalDate = null;
+
+    if ($departureDateInput === '') {
+        $errors[] = 'La date de départ est obligatoire.';
+    } else {
+        $departureDate = parseDateTimeLocal($departureDateInput);
+
+        if ($departureDate === null) {
+            $errors[] = 'La date de départ est invalide.';
+        }
+    }
+
+    if ($arrivalDateInput === '') {
+        $errors[] = 'La date d’arrivée est obligatoire.';
+    } else {
+        $arrivalDate = parseDateTimeLocal($arrivalDateInput);
+
+        if ($arrivalDate === null) {
+            $errors[] = 'La date d’arrivée est invalide.';
+        }
+    }
+
+    if (
+        $departureDate !== null
+        && $arrivalDate !== null
+        && $arrivalDate <= $departureDate
+    ) {
+        $errors[] = 'L’arrivée doit avoir lieu après le départ.';
     }
 
     return $errors;
