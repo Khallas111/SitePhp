@@ -122,21 +122,3 @@ function formatDateTime(string $value): string
 
     return $date->format('d/m/Y à H:i');
 }
-
-/**
- * Vérifie qu’une agence existe dans la base de données.
- */
-function agencyExists(PDO $databaseConnection, int $agencyId): bool
-{
-    $statement = $databaseConnection->prepare(
-        'SELECT COUNT(*)
-         FROM agencies
-         WHERE id_agency = :id_agency'
-    );
-
-    $statement->execute([
-        'id_agency' => $agencyId,
-    ]);
-
-    return (int) $statement->fetchColumn() > 0;
-}

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/src/functions.php';
 require_once __DIR__ . '/config/database.php';
+require_once __DIR__
+    . '/src/Repository/AgencyRepository.php';
+
+require_once __DIR__
+    . '/src/Repository/TripRepository.php';
 
 $departureAgencyIdInput = '';
 $arrivalAgencyIdInput = '';
@@ -19,13 +24,7 @@ if (isset($_GET['created']) && $_GET['created'] === '1') {
 
 $databaseConnection = getDatabaseConnection();
 
-$agencyStatement = $databaseConnection->query(
-    'SELECT id_agency, city
-     FROM agencies
-     ORDER BY city ASC'
-);
-
-$agencies = $agencyStatement->fetchAll();
+$agencies = findAllAgencies($databaseConnection);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $departureAgencyIdInput = trim(
@@ -76,35 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $temporaryAuthorId = 2;
 
-        $insertStatement = $databaseConnection->prepare(
-            'INSERT INTO trips (
-                departure_at,
-                arrival_at,
-                total_seats,
-                available_seats,
-                author_id,
-                departure_agency_id,
-                arrival_agency_id
-            ) VALUES (
-                :departure_at,
-                :arrival_at,
-                :total_seats,
-                :available_seats,
-                :author_id,
-                :departure_agency_id,
-                :arrival_agency_id
-            )'
+        createTrip(
+            $databaseConnection,
+            $departureDate,
+            $arrivalDate,
+            $totalSeats,
+            $temporaryAuthorId,
+            $departureAgencyId,
+            $arrivalAgencyId
         );
-
-        $insertStatement->execute([
-            'departure_at' => $departureDate->format('Y-m-d H:i:s'),
-            'arrival_at' => $arrivalDate->format('Y-m-d H:i:s'),
-            'total_seats' => $totalSeats,
-            'available_seats' => $totalSeats,
-            'author_id' => $temporaryAuthorId,
-            'departure_agency_id' => $departureAgencyId,
-            'arrival_agency_id' => $arrivalAgencyId,
-        ]);
 
         header('Location: create-trip.php?created=1');
         exit;
