@@ -13,6 +13,10 @@ $arrivalDateInput = '';
 $errors = [];
 $successMessage = '';
 
+if (isset($_GET['created']) && $_GET['created'] === '1') {
+    $successMessage = 'Le trajet a été créé avec succès.';
+}
+
 $databaseConnection = getDatabaseConnection();
 
 $agencyStatement = $databaseConnection->query(
@@ -46,6 +50,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($errors === []) {
         $totalSeats = (int) $totalSeatsInput;
         $successMessage = 'Le formulaire est valide.';
+    }
+    if ($errors === []) {
+        $departureAgencyId = (int) $departureAgencyIdInput;
+        $arrivalAgencyId = (int) $arrivalAgencyIdInput;
+
+        if (!agencyExists($databaseConnection, $departureAgencyId)) {
+            $errors[] = 'L’agence de départ sélectionnée n’existe pas.';
+        }
+
+        if (!agencyExists($databaseConnection, $arrivalAgencyId)) {
+            $errors[] = 'L’agence d’arrivée sélectionnée n’existe pas.';
+        }
+    }
+    if ($errors === []) {
+        $departureDate = parseDateTimeLocal($departureDateInput);
+        $arrivalDate = parseDateTimeLocal($arrivalDateInput);
+
+        if ($departureDate === null || $arrivalDate === null) {
+            $errors[] = 'Les dates du trajet sont invalides.';
+        }
+    }
+    if ($errors === []) {
+        $totalSeats = (int) $totalSeatsInput;
+
+        $temporaryAuthorId = 2;
+
+        $insertStatement = $databaseConnection->prepare(
+            'INSERT INTO trips (
+                departure_at,
+                arrival_at,
+                total_seats,
+                available_seats,
+                author_id,
+                departure_agency_id,
+                arrival_agency_id
+            ) VALUES (
+                :departure_at,
+                :arrival_at,
+                :total_seats,
+                :available_seats,
+                :author_id,
+                :departure_agency_id,
+                :arrival_agency_id
+            )'
+        );
+
+        $insertStatement->execute([
+            'departure_at' => $departureDate->format('Y-m-d H:i:s'),
+            'arrival_at' => $arrivalDate->format('Y-m-d H:i:s'),
+            'total_seats' => $totalSeats,
+            'available_seats' => $totalSeats,
+            'author_id' => $temporaryAuthorId,
+            'departure_agency_id' => $departureAgencyId,
+            'arrival_agency_id' => $arrivalAgencyId,
+        ]);
+
+        header('Location: create-trip.php?created=1');
+        exit;
     }
 }
 
