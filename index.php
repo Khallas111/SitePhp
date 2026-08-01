@@ -1,59 +1,41 @@
 <?php
 
 declare(strict_types=1);
+
+require_once __DIR__ . '/src/functions.php';
+require_once __DIR__ . '/config/database.php';
+
+
 $applicationName = 'Klaxon';
 $description = 'Application de covoiturage inter-sites';
 
-$trips = [
-    [
-        'departureAgency' => 'Perpignan',
-        'arrivalAgency' => 'Montpellier',
-        'departureDate' => '1er août 2026 à 08:30',
-        'arrivalDate' => '1er août 2026 à 10:15',
-        'totalSeats' => 4,
-        'availableSeats' => 3,
-        'isElectricVehicle' => true,
-    ],
-    [
-        'departureAgency' => 'Montpellier',
-        'arrivalAgency' => 'Toulouse',
-        'departureDate' => '2 août 2026 à 09:00',
-        'arrivalDate' => '2 août 2026 à 11:30',
-        'totalSeats' => 5,
-        'availableSeats' => 2,
-        'isElectricVehicle' => false,
-    ],
-    [
-        'departureAgency' => 'Toulouse',
-        'arrivalAgency' => 'Perpignan',
-        'departureDate' => '3 août 2026 à 14:00',
-        'arrivalDate' => '3 août 2026 à 16:30',
-        'totalSeats' => 4,
-        'availableSeats' => 0,
-        'isElectricVehicle' => false,
-    ],
-    [
-        'departureAgency' => 'Narbonne',
-        'arrivalAgency' => 'Perpignan',
-        'departureDate' => '4 août 2026 à 07:45',
-        'arrivalDate' => '4 août 2026 à 08:45',
-        'totalSeats' => 4,
-        'availableSeats' => 1,
-        'isElectricVehicle' => true,
-    ],
-];
 
+$databaseConnection = getDatabaseConnection();
 
+$sql = '
+    SELECT
+        trips.id_trip,
+        departure_agency.city AS departure_city,
+        trips.departure_at,
+        arrival_agency.city AS arrival_city,
+        trips.arrival_at,
+        trips.available_seats,
+        trips.total_seats
+    FROM trips
+    INNER JOIN agencies AS departure_agency
+        ON trips.departure_agency_id = departure_agency.id_agency
+    INNER JOIN agencies AS arrival_agency
+        ON trips.arrival_agency_id = arrival_agency.id_agency
+    WHERE trips.available_seats > 0
+        AND trips.departure_at > NOW()
+    ORDER BY trips.departure_at ASC
+';
 
+$statement = $databaseConnection->query($sql);
 
-
+$trips = $statement->fetchAll();
 
 ?>
-
-
-
-
-
 
 
 <!DOCTYPE html>
@@ -76,37 +58,66 @@ $trips = [
     <h2>Trajets planifiés</h2>
 
     <?php foreach ($trips as $trip): ?>
+        <article>
+            <h3>
+                <?= escape($trip['departure_city']) ?>
+                →
+                <?= escape($trip['arrival_city']) ?>
+            </h3>
 
-        <?php if ($trip['availableSeats'] > 0): ?>
+            <p>
+                Départ :
+                <?= escape(formatDateTime($trip['departure_at'])) ?>
+            </p>
+
+            <p>
+                Arrivée :
+                <?= escape(formatDateTime($trip['arrival_at'])) ?>
+            </p>
+
+            <p>
+                Places disponibles :
+                <?= escape((string) $trip['available_seats']) ?>
+                sur
+                <?= escape((string) $trip['total_seats']) ?>
+            </p>
+        </article>
+
+        <hr>
+    <?php endforeach; ?>
+
+    <?php if ($trips === []): ?>
+        <p>Aucun trajet disponible pour le moment.</p>
+    <?php else: ?>
+        <?php foreach ($trips as $trip): ?>
             <article>
                 <h3>
-                    <?= htmlspecialchars($trip['departureAgency']) ?>
+                    <?= escape($trip['departure_city']) ?>
                     →
-                    <?= htmlspecialchars($trip['arrivalAgency']) ?>
+                    <?= escape($trip['arrival_city']) ?>
                 </h3>
 
                 <p>
                     Départ :
-                    <?= htmlspecialchars($trip['departureDate']) ?>
+                    <?= escape(formatDateTime($trip['departure_at'])) ?>
                 </p>
 
                 <p>
                     Arrivée :
-                    <?= htmlspecialchars($trip['arrivalDate']) ?>
+                    <?= escape(formatDateTime($trip['arrival_at'])) ?>
                 </p>
 
                 <p>
                     Places disponibles :
-                    <?= htmlspecialchars((string) $trip['availableSeats']) ?>
+                    <?= escape((string) $trip['available_seats']) ?>
                     sur
-                    <?= htmlspecialchars((string) $trip['totalSeats']) ?>
+                    <?= escape((string) $trip['total_seats']) ?>
                 </p>
             </article>
 
             <hr>
-        <?php endif; ?>
-
-    <?php endforeach; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </body>
 
 </html>
