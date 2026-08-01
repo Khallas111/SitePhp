@@ -1,0 +1,25 @@
+users (
+    id_user PK,
+    first_name,
+    last_name,
+    email UQ,
+    password_hash,
+    phone,
+    role
+)
+
+agencies (
+    id_agency PK,
+    city UQ
+)
+
+trips (
+    id_trip PK,
+    departure_at,
+    arrival_at,
+    total_seats,
+    available_seats,
+    author_id FK → users.id_user,
+    departure_agency_id FK → agencies.id_agency,
+    arrival_agency_id FK → agencies.id_agency
+)
