@@ -3,25 +3,41 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/src/functions.php';
+require_once __DIR__ . '/config/database.php';
 
-$departureAgency = '';
-$arrivalAgency = '';
+$departureAgencyIdInput = '';
+$arrivalAgencyIdInput = '';
 $totalSeatsInput = '';
 $departureDateInput = '';
 $arrivalDateInput = '';
 $errors = [];
 $successMessage = '';
 
+$databaseConnection = getDatabaseConnection();
+
+$agencyStatement = $databaseConnection->query(
+    'SELECT id_agency, city
+     FROM agencies
+     ORDER BY city ASC'
+);
+
+$agencies = $agencyStatement->fetchAll();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $departureAgency = trim($_POST['departureAgency'] ?? '');
-    $arrivalAgency = trim($_POST['arrivalAgency'] ?? '');
+    $departureAgencyIdInput = trim(
+        $_POST['departureAgencyId'] ?? ''
+    );
+
+    $arrivalAgencyIdInput = trim(
+        $_POST['arrivalAgencyId'] ?? ''
+    );
     $totalSeatsInput = trim($_POST['totalSeats'] ?? '');
     $departureDateInput = trim($_POST['departureDate'] ?? '');
     $arrivalDateInput = trim($_POST['arrivalDate'] ?? '');
 
     $errors = validateTrip(
-        $departureAgency,
-        $arrivalAgency,
+        $departureAgencyIdInput,
+        $arrivalAgencyIdInput,
         $totalSeatsInput,
         $departureDateInput,
         $arrivalDateInput
@@ -70,18 +86,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form method="post">
         <div>
-            <label for="departureAgency">Agence de départ</label>
 
-            <input type="text" id="departureAgency" name="departureAgency" value="<?= escape($departureAgency) ?>"
-                required>
 
+            <div>
+                <label for="departureAgencyId">
+                    Agence de départ
+                </label>
+
+                <select id="departureAgencyId" name="departureAgencyId" required>
+                    <option value="">
+                        Choisissez une agence
+                    </option>
+
+                    <?php foreach ($agencies as $agency): ?>
+                        <option value="<?= escape((string) $agency['id_agency']) ?>" <?php if (
+                               $departureAgencyIdInput
+                               === (string) $agency['id_agency']
+                           ): ?> selected <?php endif; ?>>
+                            <?= escape($agency['city']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
         </div>
 
         <div>
-            <label for="arrivalAgency">Agence d’arrivée</label>
+            <div>
+                <label for="arrivalAgencyId">
+                    Agence d’arrivée
+                </label>
 
-            <input type="text" id="arrivalAgency" name="arrivalAgency" value="<?= escape($arrivalAgency) ?>" required>
+                <select id="arrivalAgencyId" name="arrivalAgencyId" required>
+                    <option value="">
+                        Choisissez une agence
+                    </option>
+
+                    <?php foreach ($agencies as $agency): ?>
+                        <option value="<?= escape((string) $agency['id_agency']) ?>" <?php if (
+                               $arrivalAgencyIdInput
+                               === (string) $agency['id_agency']
+                           ): ?> selected <?php endif; ?>>
+                            <?= escape($agency['city']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         <div>
             <label for="departureDate">Date et heure de départ</label>

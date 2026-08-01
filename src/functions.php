@@ -37,26 +37,36 @@ function parseDateTimeLocal(string $value): ?DateTimeImmutable
  * @return list<string> Liste des messages d’erreur.
  */
 function validateTrip(
-    string $departureAgency,
-    string $arrivalAgency,
+    string $departureAgencyIdInput,
+    string $arrivalAgencyIdInput,
     string $totalSeatsInput,
     string $departureDateInput,
     string $arrivalDateInput
 ): array {
     $errors = [];
 
-    if ($departureAgency === '') {
+    if ($departureAgencyIdInput === '') {
         $errors[] = 'L’agence de départ est obligatoire.';
+    } elseif (
+        !ctype_digit($departureAgencyIdInput)
+        || (int) $departureAgencyIdInput < 1
+    ) {
+        $errors[] = 'L’agence de départ sélectionnée est invalide.';
     }
 
-    if ($arrivalAgency === '') {
+    if ($arrivalAgencyIdInput === '') {
         $errors[] = 'L’agence d’arrivée est obligatoire.';
+    } elseif (
+        !ctype_digit($arrivalAgencyIdInput)
+        || (int) $arrivalAgencyIdInput < 1
+    ) {
+        $errors[] = 'L’agence d’arrivée sélectionnée est invalide.';
     }
 
     if (
-        $departureAgency !== ''
-        && $arrivalAgency !== ''
-        && $departureAgency === $arrivalAgency
+        ctype_digit($departureAgencyIdInput)
+        && ctype_digit($arrivalAgencyIdInput)
+        && $departureAgencyIdInput === $arrivalAgencyIdInput
     ) {
         $errors[] = 'Les agences de départ et d’arrivée doivent être différentes.';
     }
