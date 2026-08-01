@@ -102,3 +102,13 @@ function validateTrip(
 
     return $errors;
 }
+
+/**
+ * Formate une date MySQL pour son affichage dans une page.
+ */
+function formatDateTime(string $value): string
+{
+    $date = new DateTimeImmutable($value);
+
+    return $date->format('d/m/Y à H:i');
+}
