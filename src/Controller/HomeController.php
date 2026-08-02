@@ -9,8 +9,9 @@ function showHomePage(PDO $databaseConnection): void
 {
     $applicationName = 'Klaxon';
     $pageTitle = 'Accueil';
-
     $description = 'Application de covoiturage inter-sites';
+
+    $currentUser = getCurrentUser();
 
     $trips = findAvailableFutureTrips($databaseConnection);
 

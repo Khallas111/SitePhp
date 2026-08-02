@@ -11,6 +11,7 @@ function showCreateTripPage(PDO $databaseConnection): void
     $applicationName = 'Klaxon';
     $pageTitle = 'Proposer un trajet';
 
+    $currentUser = getCurrentUser();
     $departureAgencyIdInput = '';
     $arrivalAgencyIdInput = '';
     $totalSeatsInput = '';

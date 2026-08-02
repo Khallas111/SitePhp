@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @var string $applicationName
+ * @var string $pageTitle
+ * @var string $emailInput
+ * @var list<string> $errors
+ * @var null $currentUser
+ */
+
+require __DIR__ . '/../partials/header.php';
+
+?>
+
+<h1>Connexion</h1>
+
+<?php if ($errors !== []): ?>
+    <div>
+        <h2>La connexion a échoué</h2>
+
+        <ul>
+            <?php foreach ($errors as $error): ?>
+                <li>
+                    <?= escape($error) ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<form method="post">
+    <div>
+        <label for="email">
+            Adresse email
+        </label>
+
+        <input type="email" id="email" name="email" value="<?= escape($emailInput) ?>" autocomplete="email" required>
+    </div>
+
+    <div>
+        <label for="password">
+            Mot de passe
+        </label>
+
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+    </div>
+
+    <button type="submit">
+        Se connecter
+    </button>
+</form>
+
+<?php
+
+require __DIR__ . '/../partials/footer.php';
+
+?>

@@ -10,6 +10,7 @@ function showNotFoundPage(): void
 {
     http_response_code(404);
 
+    $currentUser = getCurrentUser();
     $applicationName = 'Klaxon';
     $pageTitle = 'Page introuvable';
 
