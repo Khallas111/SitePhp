@@ -122,3 +122,26 @@ function formatDateTime(string $value): string
 
     return $date->format('d/m/Y à H:i');
 }
+
+/**
+ * Retourne l’utilisateur connecté ou null.
+ *
+ * @return array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }|null
+ */
+function getCurrentUser(): ?array
+{
+    $user = $_SESSION['user'] ?? null;
+
+    if (!is_array($user)) {
+        return null;
+    }
+
+    return $user;
+}
