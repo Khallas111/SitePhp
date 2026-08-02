@@ -7,6 +7,9 @@ declare(strict_types=1);
  */
 function showCreateTripPage(PDO $databaseConnection): void
 {
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Proposer un trajet';
     $departureAgencyIdInput = '';
     $arrivalAgencyIdInput = '';
     $totalSeatsInput = '';

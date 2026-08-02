@@ -8,6 +8,8 @@ declare(strict_types=1);
 function showHomePage(PDO $databaseConnection): void
 {
     $applicationName = 'Klaxon';
+    $pageTitle = 'Accueil';
+
     $description = 'Application de covoiturage inter-sites';
 
     $trips = findAvailableFutureTrips($databaseConnection);
