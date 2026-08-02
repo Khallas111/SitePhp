@@ -14,6 +14,7 @@ function showLoginPage(PDO $databaseConnection): void
     $errors = [];
 
     $currentUser = getCurrentUser();
+    $csrfToken = getCsrfToken();
 
     if ($currentUser !== null) {
         header('Location: index.php');
@@ -24,16 +25,28 @@ function showLoginPage(PDO $databaseConnection): void
         $emailInput = trim($_POST['email'] ?? '');
         $passwordInput = $_POST['password'] ?? '';
 
-        if ($emailInput === '') {
-            $errors[] = 'L’adresse email est obligatoire.';
-        } elseif (
-            filter_var($emailInput, FILTER_VALIDATE_EMAIL) === false
-        ) {
-            $errors[] = 'L’adresse email est invalide.';
+
+
+        if (!isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+            $errors[] =
+                'Le formulaire a expiré. Veuillez réessayer.';
         }
 
-        if ($passwordInput === '') {
-            $errors[] = 'Le mot de passe est obligatoire.';
+        if ($errors === []) {
+            if ($emailInput === '') {
+                $errors[] = 'L’adresse email est obligatoire.';
+            } elseif (
+                filter_var(
+                    $emailInput,
+                    FILTER_VALIDATE_EMAIL
+                ) === false
+            ) {
+                $errors[] = 'L’adresse email est invalide.';
+            }
+
+            if ($passwordInput === '') {
+                $errors[] = 'Le mot de passe est obligatoire.';
+            }
         }
 
         if ($errors === []) {
@@ -55,6 +68,7 @@ function showLoginPage(PDO $databaseConnection): void
 
         if ($errors === [] && $user !== null) {
             session_regenerate_id(true);
+            unset($_SESSION['csrf_token']);
 
             $_SESSION['user'] = [
                 'id_user' => (int) $user['id_user'],
@@ -82,6 +96,13 @@ function logoutUser(): void
         http_response_code(405);
 
         echo 'Méthode non autorisée.';
+        return;
+    }
+
+    if (!isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
+
+        echo 'Requête interdite.';
         return;
     }
 

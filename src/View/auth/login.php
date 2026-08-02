@@ -6,6 +6,7 @@
  * @var string $emailInput
  * @var list<string> $errors
  * @var null $currentUser
+ * @var string $csrfToken
  */
 
 require __DIR__ . '/../partials/header.php';
@@ -29,6 +30,7 @@ require __DIR__ . '/../partials/header.php';
 <?php endif; ?>
 
 <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
     <div>
         <label for="email">
             Adresse email

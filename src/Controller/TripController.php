@@ -12,6 +12,8 @@ function showCreateTripPage(PDO $databaseConnection): void
     $pageTitle = 'Proposer un trajet';
 
     $currentUser = requireLogin();
+    $csrfToken = getCsrfToken();
+
     $departureAgencyIdInput = '';
     $arrivalAgencyIdInput = '';
     $totalSeatsInput = '';
@@ -57,13 +59,20 @@ function showCreateTripPage(PDO $databaseConnection): void
             $_POST['arrivalDate'] ?? ''
         );
 
-        $errors = validateTrip(
-            $departureAgencyIdInput,
-            $arrivalAgencyIdInput,
-            $totalSeatsInput,
-            $departureDateInput,
-            $arrivalDateInput
-        );
+        if (!isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+            $errors[] =
+                'Le formulaire a expiré. Veuillez réessayer.';
+        }
+
+        if ($errors === []) {
+            $errors = validateTrip(
+                $departureAgencyIdInput,
+                $arrivalAgencyIdInput,
+                $totalSeatsInput,
+                $departureDateInput,
+                $arrivalDateInput
+            );
+        }
 
         if ($errors === []) {
             $departureAgencyId = (int) $departureAgencyIdInput;
