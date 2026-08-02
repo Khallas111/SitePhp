@@ -11,7 +11,7 @@ function showCreateTripPage(PDO $databaseConnection): void
     $applicationName = 'Klaxon';
     $pageTitle = 'Proposer un trajet';
 
-    $currentUser = getCurrentUser();
+    $currentUser = requireLogin();
     $departureAgencyIdInput = '';
     $arrivalAgencyIdInput = '';
     $totalSeatsInput = '';
@@ -119,15 +119,14 @@ function showCreateTripPage(PDO $databaseConnection): void
             && $arrivalDate !== null
             && $totalSeats !== null
         ) {
-            // Temporaire : remplacé plus tard par l’utilisateur connecté.
-            $temporaryAuthorId = 2;
+            $authorId = $currentUser['id_user'];
 
             createTrip(
                 $databaseConnection,
                 $departureDate,
                 $arrivalDate,
                 $totalSeats,
-                $temporaryAuthorId,
+                $authorId,
                 $departureAgencyId,
                 $arrivalAgencyId
             );
