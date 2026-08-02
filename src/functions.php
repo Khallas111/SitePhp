@@ -145,3 +145,30 @@ function getCurrentUser(): ?array
 
     return $user;
 }
+
+/**
+ * Retourne l’utilisateur connecté.
+ *
+ * Redirige vers la page de connexion lorsqu’aucun utilisateur
+ * n’est authentifié.
+ *
+ * @return array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }
+ */
+function requireLogin(): array
+{
+    $currentUser = getCurrentUser();
+
+    if ($currentUser === null) {
+        header('Location: index.php?route=login');
+        exit;
+    }
+
+    return $currentUser;
+}
