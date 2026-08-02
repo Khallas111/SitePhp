@@ -10,6 +10,7 @@ function showCreateTripPage(PDO $databaseConnection): void
 
     $applicationName = 'Klaxon';
     $pageTitle = 'Proposer un trajet';
+
     $departureAgencyIdInput = '';
     $arrivalAgencyIdInput = '';
     $totalSeatsInput = '';
@@ -130,7 +131,9 @@ function showCreateTripPage(PDO $databaseConnection): void
                 $arrivalAgencyId
             );
 
-            header('Location: create-trip.php?created=1');
+            header(
+                'Location: index.php?route=trips/create&created=1'
+            );
             exit;
         }
     }
