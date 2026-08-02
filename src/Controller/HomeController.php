@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Prépare et affiche la page d’accueil.
+ */
+function showHomePage(PDO $databaseConnection): void
+{
+    $applicationName = 'Klaxon';
+    $description = 'Application de covoiturage inter-sites';
+
+    $trips = findAvailableFutureTrips($databaseConnection);
+
+    require __DIR__ . '/../View/home.php';
+}
