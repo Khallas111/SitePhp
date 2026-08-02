@@ -172,3 +172,33 @@ function requireLogin(): array
 
     return $currentUser;
 }
+
+/**
+ * Retourne le jeton CSRF de la session courante.
+ */
+function getCsrfToken(): string
+{
+    $csrfToken = $_SESSION['csrf_token'] ?? null;
+
+    if (!is_string($csrfToken)) {
+        $csrfToken = bin2hex(random_bytes(32));
+
+        $_SESSION['csrf_token'] = $csrfToken;
+    }
+
+    return $csrfToken;
+}
+
+/**
+ * Vérifie qu’un jeton CSRF correspond à celui de la session.
+ */
+function isCsrfTokenValid(mixed $csrfToken): bool
+{
+    $sessionToken = $_SESSION['csrf_token'] ?? null;
+
+    if (!is_string($csrfToken) || !is_string($sessionToken)) {
+        return false;
+    }
+
+    return hash_equals($sessionToken, $csrfToken);
+}

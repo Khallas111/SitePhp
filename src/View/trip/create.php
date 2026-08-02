@@ -11,6 +11,7 @@
  * @var string $departureDateInput
  * @var string $arrivalDateInput
  * @var string $totalSeatsInput
+ * @var string $csrfToken
  */
 
 require __DIR__ . '/../partials/header.php';
@@ -41,6 +42,8 @@ require __DIR__ . '/../partials/header.php';
 
 
 <form method="post">
+    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
     <div>
 
 

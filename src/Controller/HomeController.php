@@ -12,6 +12,7 @@ function showHomePage(PDO $databaseConnection): void
     $description = 'Application de covoiturage inter-sites';
 
     $currentUser = getCurrentUser();
+    $csrfToken = getCsrfToken();
 
     $trips = findAvailableFutureTrips($databaseConnection);
 

@@ -10,9 +10,10 @@ function showNotFoundPage(): void
 {
     http_response_code(404);
 
-    $currentUser = getCurrentUser();
     $applicationName = 'Klaxon';
     $pageTitle = 'Page introuvable';
+    $currentUser = getCurrentUser();
+    $csrfToken = getCsrfToken();
 
     require __DIR__ . '/../View/errors/404.php';
 }

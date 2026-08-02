@@ -3,6 +3,7 @@
 /**
  * @var string $applicationName
  * @var string $pageTitle
+ * @var string $csrfToken
  * @var array{
  *     id_user: int,
  *     first_name: string,
@@ -52,6 +53,8 @@
                 </span>
 
                 <form method="post" action="index.php?route=logout">
+                    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
                     <button type="submit">
                         Déconnexion
                     </button>
