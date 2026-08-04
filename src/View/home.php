@@ -5,7 +5,17 @@
  * @var string $pageTitle
  * @var string $description
  * @var list<array<string, mixed>> $trips
+ *   @var array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }|null $currentUser
  */
+
+
 
 require __DIR__ . '/partials/header.php';
 
@@ -48,6 +58,17 @@ require __DIR__ . '/partials/header.php';
                 sur
                 <?= escape((string) $trip['total_seats']) ?>
             </p>
+
+            <?php if ($currentUser !== null): ?>
+                <p>
+                    <a href="index.php?route=trips/show&amp;id=<?= escape(
+                        (string) $trip['id_trip']
+                    ) ?>">
+                        Voir les détails
+                    </a>
+                </p>
+            <?php endif; ?>
+
         </article>
 
         <hr>
