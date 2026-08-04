@@ -149,3 +149,44 @@ function showCreateTripPage(PDO $databaseConnection): void
 
     require __DIR__ . '/../View/trip/create.php';
 }
+
+/**
+ * Affiche les informations détaillées d’un trajet.
+ */
+function showTripDetailsPage(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireLogin();
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Détails du trajet';
+    $csrfToken = getCsrfToken();
+
+    $tripIdInput = $_GET['id'] ?? null;
+
+    if (
+        !is_string($tripIdInput)
+        || !ctype_digit($tripIdInput)
+        || (int) $tripIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $tripId = (int) $tripIdInput;
+
+    $trip = findTripDetailsById(
+        $databaseConnection,
+        $tripId
+    );
+
+    if ($trip === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    $isAuthor =
+        $trip['author_id'] === $currentUser['id_user'];
+
+    require __DIR__ . '/../View/trip/show.php';
+}
