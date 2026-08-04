@@ -188,5 +188,204 @@ function showTripDetailsPage(
     $isAuthor =
         $trip['author_id'] === $currentUser['id_user'];
 
-    require __DIR__ . '/../View/trip/show.php';
+    $canManageTrip = canManageTrip(
+        $currentUser,
+        $trip['author_id']
+    );
+}
+
+/**
+ * Affiche et traite le formulaire de modification d’un trajet.
+ */
+function showEditTripPage(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireLogin();
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Modifier un trajet';
+    $csrfToken = getCsrfToken();
+
+    $tripIdInput = $_GET['id'] ?? null;
+
+    if (
+        !is_string($tripIdInput)
+        || !ctype_digit($tripIdInput)
+        || (int) $tripIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $tripId = (int) $tripIdInput;
+
+    $trip = findTripDetailsById(
+        $databaseConnection,
+        $tripId
+    );
+
+    if ($trip === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    if (!canManageTrip($currentUser, $trip['author_id'])) {
+        showForbiddenPage();
+        return;
+    }
+
+    $agencies = findAllAgencies($databaseConnection);
+
+    $departureAgencyIdInput =
+        (string) $trip['departure_agency_id'];
+
+    $arrivalAgencyIdInput =
+        (string) $trip['arrival_agency_id'];
+
+    $departureDateInput =
+        formatDateTimeLocalInput($trip['departure_at']);
+
+    $arrivalDateInput =
+        formatDateTimeLocalInput($trip['arrival_at']);
+
+    $totalSeatsInput = (string) $trip['total_seats'];
+
+    $errors = [];
+    $successMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['updated'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'Le trajet a été modifié avec succès.';
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $departureAgencyIdInput = trim(
+            $_POST['departureAgencyId'] ?? ''
+        );
+
+        $arrivalAgencyIdInput = trim(
+            $_POST['arrivalAgencyId'] ?? ''
+        );
+
+        $departureDateInput = trim(
+            $_POST['departureDate'] ?? ''
+        );
+
+        $arrivalDateInput = trim(
+            $_POST['arrivalDate'] ?? ''
+        );
+
+        $totalSeatsInput = trim(
+            $_POST['totalSeats'] ?? ''
+        );
+
+        if (
+            !isCsrfTokenValid(
+                $_POST['csrf_token'] ?? null
+            )
+        ) {
+            $errors[] =
+                'Le formulaire a expiré. Veuillez réessayer.';
+        }
+
+        if ($errors === []) {
+            $errors = validateTrip(
+                $departureAgencyIdInput,
+                $arrivalAgencyIdInput,
+                $totalSeatsInput,
+                $departureDateInput,
+                $arrivalDateInput
+            );
+        }
+
+        if ($errors === []) {
+            $departureAgencyId =
+                (int) $departureAgencyIdInput;
+
+            $arrivalAgencyId =
+                (int) $arrivalAgencyIdInput;
+
+            if (
+                !agencyExists(
+                    $databaseConnection,
+                    $departureAgencyId
+                )
+            ) {
+                $errors[] =
+                    'L’agence de départ sélectionnée n’existe pas.';
+            }
+
+            if (
+                !agencyExists(
+                    $databaseConnection,
+                    $arrivalAgencyId
+                )
+            ) {
+                $errors[] =
+                    'L’agence d’arrivée sélectionnée n’existe pas.';
+            }
+        }
+
+        if ($errors === []) {
+            $departureDate = parseDateTimeLocal(
+                $departureDateInput
+            );
+
+            $arrivalDate = parseDateTimeLocal(
+                $arrivalDateInput
+            );
+
+            if (
+                $departureDate === null
+                || $arrivalDate === null
+            ) {
+                $errors[] =
+                    'Les dates du trajet sont invalides.';
+            }
+        }
+
+        if ($errors === []) {
+            $totalSeats = (int) $totalSeatsInput;
+
+            $occupiedSeats =
+                $trip['total_seats']
+                - $trip['available_seats'];
+
+            if ($totalSeats < $occupiedSeats) {
+                $errors[] =
+                    'Le nombre total de places ne peut pas '
+                    . 'être inférieur au nombre de places '
+                    . 'déjà occupées.';
+            } else {
+                $availableSeats =
+                    $totalSeats - $occupiedSeats;
+            }
+        }
+
+        if ($errors === []) {
+            updateTrip(
+                $databaseConnection,
+                $tripId,
+                $departureDate,
+                $arrivalDate,
+                $totalSeats,
+                $availableSeats,
+                $departureAgencyId,
+                $arrivalAgencyId
+            );
+
+            header(
+                'Location: index.php'
+                . '?route=trips/edit'
+                . '&id=' . $tripId
+                . '&updated=1'
+            );
+            exit;
+        }
+    }
+
+    require __DIR__ . '/../View/trip/edit.php';
 }

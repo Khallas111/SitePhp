@@ -108,29 +108,31 @@ function findTripDetailsById(
 ): ?array {
     $statement = $databaseConnection->prepare(
         'SELECT
-            trips.id_trip,
-            departure_agency.city AS departure_city,
-            trips.departure_at,
-            arrival_agency.city AS arrival_city,
-            trips.arrival_at,
-            trips.total_seats,
-            trips.available_seats,
-            users.id_user AS author_id,
-            users.first_name AS author_first_name,
-            users.last_name AS author_last_name,
-            users.email AS author_email,
-            users.phone AS author_phone
-        FROM trips
-        INNER JOIN agencies AS departure_agency
-            ON trips.departure_agency_id =
-               departure_agency.id_agency
-        INNER JOIN agencies AS arrival_agency
-            ON trips.arrival_agency_id =
-               arrival_agency.id_agency
-        INNER JOIN users
-            ON trips.author_id = users.id_user
-        WHERE trips.id_trip = :id_trip
-        LIMIT 1'
+        trips.id_trip,
+        trips.departure_agency_id,
+        departure_agency.city AS departure_city,
+        trips.departure_at,
+        trips.arrival_agency_id,
+        arrival_agency.city AS arrival_city,
+        trips.arrival_at,
+        trips.total_seats,
+        trips.available_seats,
+        users.id_user AS author_id,
+        users.first_name AS author_first_name,
+        users.last_name AS author_last_name,
+        users.email AS author_email,
+        users.phone AS author_phone
+    FROM trips
+    INNER JOIN agencies AS departure_agency
+        ON trips.departure_agency_id =
+           departure_agency.id_agency
+    INNER JOIN agencies AS arrival_agency
+        ON trips.arrival_agency_id =
+           arrival_agency.id_agency
+    INNER JOIN users
+        ON trips.author_id = users.id_user
+    WHERE trips.id_trip = :id_trip
+    LIMIT 1'
     );
 
     $statement->execute([
@@ -145,8 +147,12 @@ function findTripDetailsById(
 
     return [
         'id_trip' => (int) $trip['id_trip'],
+        'departure_agency_id' =>
+            (int) $trip['departure_agency_id'],
         'departure_city' => $trip['departure_city'],
         'departure_at' => $trip['departure_at'],
+        'arrival_agency_id' =>
+            (int) $trip['arrival_agency_id'],
         'arrival_city' => $trip['arrival_city'],
         'arrival_at' => $trip['arrival_at'],
         'total_seats' => (int) $trip['total_seats'],
@@ -157,4 +163,42 @@ function findTripDetailsById(
         'author_email' => $trip['author_email'],
         'author_phone' => $trip['author_phone'],
     ];
+}
+
+/**
+ * Met à jour un trajet existant.
+ */
+function updateTrip(
+    PDO $databaseConnection,
+    int $tripId,
+    DateTimeImmutable $departureDate,
+    DateTimeImmutable $arrivalDate,
+    int $totalSeats,
+    int $availableSeats,
+    int $departureAgencyId,
+    int $arrivalAgencyId
+): void {
+    $statement = $databaseConnection->prepare(
+        'UPDATE trips
+         SET
+            departure_at = :departure_at,
+            arrival_at = :arrival_at,
+            total_seats = :total_seats,
+            available_seats = :available_seats,
+            departure_agency_id = :departure_agency_id,
+            arrival_agency_id = :arrival_agency_id
+         WHERE id_trip = :id_trip'
+    );
+
+    $statement->execute([
+        'id_trip' => $tripId,
+        'departure_at' =>
+            $departureDate->format('Y-m-d H:i:s'),
+        'arrival_at' =>
+            $arrivalDate->format('Y-m-d H:i:s'),
+        'total_seats' => $totalSeats,
+        'available_seats' => $availableSeats,
+        'departure_agency_id' => $departureAgencyId,
+        'arrival_agency_id' => $arrivalAgencyId,
+    ]);
 }

@@ -47,5 +47,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'trips/edit' => showEditTripPage(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };

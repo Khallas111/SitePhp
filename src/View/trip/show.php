@@ -27,6 +27,7 @@
  *     author_phone: string
  * } $trip
  * @var bool $isAuthor
+ * @var bool $canManageTrip
  */
 
 require __DIR__ . '/../partials/header.php';
@@ -86,6 +87,16 @@ require __DIR__ . '/../partials/header.php';
 <?php if ($isAuthor): ?>
     <p>
         Vous êtes l’auteur de ce trajet.
+    </p>
+<?php endif; ?>
+
+<?php if ($canManageTrip): ?>
+    <p>
+        <a href="index.php?route=trips/edit&amp;id=<?= escape(
+            (string) $trip['id_trip']
+        ) ?>">
+            Modifier le trajet
+        </a>
     </p>
 <?php endif; ?>
 
