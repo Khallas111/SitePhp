@@ -202,3 +202,35 @@ function isCsrfTokenValid(mixed $csrfToken): bool
 
     return hash_equals($sessionToken, $csrfToken);
 }
+
+/**
+ * Indique si un utilisateur peut gérer un trajet.
+ *
+ * L’auteur et un administrateur sont autorisés.
+ *
+ * @param array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * } $currentUser
+ */
+function canManageTrip(
+    array $currentUser,
+    int $authorId
+): bool {
+    return $currentUser['id_user'] === $authorId
+        || $currentUser['role'] === 'ADMIN';
+}
+
+/**
+ * Formate une date MySQL pour un champ datetime-local.
+ */
+function formatDateTimeLocalInput(string $value): string
+{
+    $date = new DateTimeImmutable($value);
+
+    return $date->format('Y-m-d\TH:i');
+}
