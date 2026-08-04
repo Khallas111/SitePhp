@@ -98,6 +98,18 @@ require __DIR__ . '/../partials/header.php';
             Modifier le trajet
         </a>
     </p>
+
+    <form method="post" action="index.php?route=trips/delete" onsubmit="return confirm(
+        'Voulez-vous vraiment supprimer ce trajet ?'
+    );">
+        <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+        <input type="hidden" name="trip_id" value="<?= escape((string) $trip['id_trip']) ?>">
+
+        <button type="submit">
+            Supprimer le trajet
+        </button>
+    </form>
 <?php endif; ?>
 
 <p>

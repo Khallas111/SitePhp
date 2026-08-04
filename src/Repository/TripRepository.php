@@ -202,3 +202,20 @@ function updateTrip(
         'arrival_agency_id' => $arrivalAgencyId,
     ]);
 }
+
+/**
+ * Supprime un trajet à partir de son identifiant.
+ */
+function deleteTripById(
+    PDO $databaseConnection,
+    int $tripId
+): void {
+    $statement = $databaseConnection->prepare(
+        'DELETE FROM trips
+         WHERE id_trip = :id_trip'
+    );
+
+    $statement->execute([
+        'id_trip' => $tripId,
+    ]);
+}

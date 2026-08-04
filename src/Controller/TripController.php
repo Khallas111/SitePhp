@@ -192,6 +192,8 @@ function showTripDetailsPage(
         $currentUser,
         $trip['author_id']
     );
+
+    require __DIR__ . '/../View/trip/show.php';
 }
 
 /**
@@ -388,4 +390,61 @@ function showEditTripPage(
     }
 
     require __DIR__ . '/../View/trip/edit.php';
+}
+
+/**
+ * Supprime un trajet lorsque l’utilisateur possède les droits nécessaires.
+ */
+function deleteTripAction(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireLogin();
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+
+        echo 'Méthode non autorisée.';
+        return;
+    }
+
+    if (!isCsrfTokenValid($_POST['csrf_token'] ?? null)) {
+        showForbiddenPage();
+        return;
+    }
+
+    $tripIdInput = $_POST['trip_id'] ?? null;
+
+    if (
+        !is_string($tripIdInput)
+        || !ctype_digit($tripIdInput)
+        || (int) $tripIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $tripId = (int) $tripIdInput;
+
+    $trip = findTripDetailsById(
+        $databaseConnection,
+        $tripId
+    );
+
+    if ($trip === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    if (!canManageTrip($currentUser, $trip['author_id'])) {
+        showForbiddenPage();
+        return;
+    }
+
+    deleteTripById(
+        $databaseConnection,
+        $tripId
+    );
+
+    header('Location: index.php?deleted=1');
+    exit;
 }
