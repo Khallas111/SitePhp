@@ -14,7 +14,19 @@ function showHomePage(PDO $databaseConnection): void
     $currentUser = getCurrentUser();
     $csrfToken = getCsrfToken();
 
-    $trips = findAvailableFutureTrips($databaseConnection);
+    $successMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['deleted'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'Le trajet a été supprimé avec succès.';
+    }
+
+    $trips = findAvailableFutureTrips(
+        $databaseConnection
+    );
 
     require __DIR__ . '/../View/home.php';
 }

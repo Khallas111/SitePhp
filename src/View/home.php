@@ -13,6 +13,7 @@
  *     phone: string,
  *     role: string
  * }|null $currentUser
+ * @var string $successMessage
  */
 
 
@@ -26,6 +27,12 @@ require __DIR__ . '/partials/header.php';
 <p><?= escape($description) ?></p>
 
 <h2>Trajets planifiés</h2>
+
+<?php if ($successMessage !== ''): ?>
+    <p>
+        <?= escape($successMessage) ?>
+    </p>
+<?php endif; ?>
 
 <?php if ($trips === []): ?>
     <p>Aucun trajet disponible pour le moment.</p>
