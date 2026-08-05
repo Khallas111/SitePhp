@@ -30,6 +30,9 @@ require_once __DIR__
 require_once __DIR__
     . '/src/Controller/ErrorController.php';
 
+require_once __DIR__
+    . '/src/Controller/AdminController.php';
+
 $databaseConnection = getDatabaseConnection();
 
 $route = trim($_GET['route'] ?? '', '/');
@@ -54,6 +57,10 @@ match ($route) {
     ),
 
     'trips/delete' => deleteTripAction(
+        $databaseConnection
+    ),
+
+    'admin/users' => showAdminUsersPage(
         $databaseConnection
     ),
 
