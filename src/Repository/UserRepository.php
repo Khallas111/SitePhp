@@ -89,3 +89,67 @@ function findAllUsers(PDO $databaseConnection): array
 
     return $users;
 }
+
+/**
+ * Indique si une adresse email est déjà utilisée.
+ */
+function userEmailExists(
+    PDO $databaseConnection,
+    string $email
+): bool {
+    $statement = $databaseConnection->prepare(
+        'SELECT COUNT(*)
+         FROM users
+         WHERE email = :email'
+    );
+
+    $statement->execute([
+        'email' => $email,
+    ]);
+
+    return (int) $statement->fetchColumn() > 0;
+}
+
+/**
+ * Crée un nouvel utilisateur.
+ *
+ * @return int Identifiant du nouvel utilisateur.
+ */
+function createUser(
+    PDO $databaseConnection,
+    string $firstName,
+    string $lastName,
+    string $email,
+    string $passwordHash,
+    string $phone,
+    string $role
+): int {
+    $statement = $databaseConnection->prepare(
+        'INSERT INTO users (
+            first_name,
+            last_name,
+            email,
+            password_hash,
+            phone,
+            role
+         ) VALUES (
+            :first_name,
+            :last_name,
+            :email,
+            :password_hash,
+            :phone,
+            :role
+         )'
+    );
+
+    $statement->execute([
+        'first_name' => $firstName,
+        'last_name' => $lastName,
+        'email' => $email,
+        'password_hash' => $passwordHash,
+        'phone' => $phone,
+        'role' => $role,
+    ]);
+
+    return (int) $databaseConnection->lastInsertId();
+}

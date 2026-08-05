@@ -64,5 +64,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/users/create' => showAdminCreateUserPage(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };

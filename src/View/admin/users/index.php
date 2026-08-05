@@ -29,6 +29,12 @@ require __DIR__ . '/../../partials/header.php';
 <h1>Gestion des utilisateurs</h1>
 
 <p>
+    <a href="index.php?route=admin/users/create">
+        Ajouter un utilisateur
+    </a>
+</p>
+
+<p>
     <?= escape((string) count($users)) ?>
     utilisateur(s) enregistré(s).
 </p>
