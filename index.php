@@ -68,5 +68,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/users/edit' => showAdminEditUserPage(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };
