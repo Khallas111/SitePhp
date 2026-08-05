@@ -219,3 +219,23 @@ function deleteTripById(
         'id_trip' => $tripId,
     ]);
 }
+
+/**
+ * Retourne le nombre de trajets créés par un utilisateur.
+ */
+function countTripsByAuthor(
+    PDO $databaseConnection,
+    int $authorId
+): int {
+    $statement = $databaseConnection->prepare(
+        'SELECT COUNT(*)
+         FROM trips
+         WHERE author_id = :author_id'
+    );
+
+    $statement->execute([
+        'author_id' => $authorId,
+    ]);
+
+    return (int) $statement->fetchColumn();
+}

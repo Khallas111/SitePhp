@@ -289,3 +289,34 @@ function updateUser(
         'password_hash' => $passwordHash,
     ]);
 }
+
+/**
+ * Retourne le nombre de comptes administrateurs.
+ */
+function countAdminUsers(PDO $databaseConnection): int
+{
+    $statement = $databaseConnection->query(
+        "SELECT COUNT(*)
+         FROM users
+         WHERE role = 'ADMIN'"
+    );
+
+    return (int) $statement->fetchColumn();
+}
+
+/**
+ * Supprime un utilisateur à partir de son identifiant.
+ */
+function deleteUserById(
+    PDO $databaseConnection,
+    int $userId
+): void {
+    $statement = $databaseConnection->prepare(
+        'DELETE FROM users
+         WHERE id_user = :id_user'
+    );
+
+    $statement->execute([
+        'id_user' => $userId,
+    ]);
+}

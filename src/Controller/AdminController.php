@@ -14,9 +14,35 @@ function showAdminUsersPage(
     $pageTitle = 'Gestion des utilisateurs';
     $csrfToken = getCsrfToken();
 
+    $successMessage = '';
+    $errorMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['deleted'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'L’utilisateur a été supprimé avec succès.';
+    }
+
+    $errorCode = $_GET['error'] ?? '';
+
+    if ($errorCode === 'self_delete') {
+        $errorMessage =
+            'Vous ne pouvez pas supprimer votre propre compte.';
+    } elseif ($errorCode === 'last_admin') {
+        $errorMessage =
+            'Le dernier administrateur ne peut pas être supprimé.';
+    } elseif ($errorCode === 'has_trips') {
+        $errorMessage =
+            'Cet utilisateur possède encore des trajets. '
+            . 'Supprimez-les avant de supprimer son compte.';
+    }
+
     $users = findAllUsers($databaseConnection);
 
-    require __DIR__ . '/../View/admin/users/index.php';
+    require __DIR__
+        . '/../View/admin/users/index.php';
 }
 
 /**
@@ -394,3 +420,100 @@ function showAdminEditUserPage(
     require __DIR__
         . '/../View/admin/users/edit.php';
 }
+
+/**
+ * Supprime un utilisateur lorsque toutes les règles
+ * de sécurité sont respectées.
+ */
+function deleteAdminUserAction(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireAdmin();
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+
+        echo 'Méthode non autorisée.';
+        return;
+    }
+
+    if (
+        !isCsrfTokenValid(
+            $_POST['csrf_token'] ?? null
+        )
+    ) {
+        showForbiddenPage();
+        return;
+    }
+
+    $userIdInput = $_POST['user_id'] ?? null;
+
+    if (
+        !is_string($userIdInput)
+        || !ctype_digit($userIdInput)
+        || (int) $userIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $userId = (int) $userIdInput;
+
+    $user = findUserById(
+        $databaseConnection,
+        $userId
+    );
+
+    if ($user === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    if ($userId === $currentUser['id_user']) {
+        header(
+            'Location: index.php'
+            . '?route=admin/users'
+            . '&error=self_delete'
+        );
+        exit;
+    }
+
+    if (
+        $user['role'] === 'ADMIN'
+        && countAdminUsers($databaseConnection) <= 1
+    ) {
+        header(
+            'Location: index.php'
+            . '?route=admin/users'
+            . '&error=last_admin'
+        );
+        exit;
+    }
+
+    $tripCount = countTripsByAuthor(
+        $databaseConnection,
+        $userId
+    );
+
+    if ($tripCount > 0) {
+        header(
+            'Location: index.php'
+            . '?route=admin/users'
+            . '&error=has_trips'
+        );
+        exit;
+    }
+
+    deleteUserById(
+        $databaseConnection,
+        $userId
+    );
+
+    header(
+        'Location: index.php'
+        . '?route=admin/users'
+        . '&deleted=1'
+    );
+    exit;
+}
+

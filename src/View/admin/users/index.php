@@ -20,6 +20,8 @@
  *     phone: string,
  *     role: string
  * }> $users
+ * @var string $successMessage
+ * @var string $errorMessage
  */
 
 require __DIR__ . '/../../partials/header.php';
@@ -27,6 +29,22 @@ require __DIR__ . '/../../partials/header.php';
 ?>
 
 <h1>Gestion des utilisateurs</h1>
+
+<?php if ($successMessage !== ''): ?>
+    <p>
+        <?= escape($successMessage) ?>
+    </p>
+<?php endif; ?>
+
+<?php if ($errorMessage !== ''): ?>
+    <div>
+        <strong>Suppression impossible</strong>
+
+        <p>
+            <?= escape($errorMessage) ?>
+        </p>
+    </div>
+<?php endif; ?>
 
 <p>
     <a href="index.php?route=admin/users/create">
@@ -99,6 +117,28 @@ require __DIR__ . '/../../partials/header.php';
                         ) ?>">
                             Modifier
                         </a>
+
+                        <?php if (
+                            $user['id_user']
+                            !== $currentUser['id_user']
+                        ): ?>
+                            <form method="post" action="index.php?route=admin/users/delete"
+                                onsubmit="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');">
+                                <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+                                <input type="hidden" name="user_id" value="<?= escape(
+                                    (string) $user['id_user']
+                                ) ?>">
+
+                                <button type="submit">
+                                    Supprimer
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <span>
+                                Compte actuellement connecté
+                            </span>
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
