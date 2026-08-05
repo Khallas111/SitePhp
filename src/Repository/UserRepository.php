@@ -153,3 +153,139 @@ function createUser(
 
     return (int) $databaseConnection->lastInsertId();
 }
+
+/**
+ * Recherche un utilisateur à partir de son identifiant.
+ *
+ * Le hash du mot de passe n’est pas retourné.
+ *
+ * @return array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }|null
+ */
+function findUserById(
+    PDO $databaseConnection,
+    int $userId
+): ?array {
+    $statement = $databaseConnection->prepare(
+        'SELECT
+            id_user,
+            first_name,
+            last_name,
+            email,
+            phone,
+            role
+         FROM users
+         WHERE id_user = :id_user
+         LIMIT 1'
+    );
+
+    $statement->execute([
+        'id_user' => $userId,
+    ]);
+
+    $user = $statement->fetch();
+
+    if ($user === false) {
+        return null;
+    }
+
+    return [
+        'id_user' => (int) $user['id_user'],
+        'first_name' => $user['first_name'],
+        'last_name' => $user['last_name'],
+        'email' => $user['email'],
+        'phone' => $user['phone'],
+        'role' => $user['role'],
+    ];
+}
+
+/**
+ * Indique si un email appartient à un autre utilisateur.
+ */
+function userEmailExistsForAnotherUser(
+    PDO $databaseConnection,
+    string $email,
+    int $excludedUserId
+): bool {
+    $statement = $databaseConnection->prepare(
+        'SELECT COUNT(*)
+         FROM users
+         WHERE email = :email
+           AND id_user != :excluded_user_id'
+    );
+
+    $statement->execute([
+        'email' => $email,
+        'excluded_user_id' => $excludedUserId,
+    ]);
+
+    return (int) $statement->fetchColumn() > 0;
+}
+
+/**
+ * Met à jour un utilisateur.
+ *
+ * Le mot de passe reste inchangé lorsque $passwordHash vaut null.
+ */
+function updateUser(
+    PDO $databaseConnection,
+    int $userId,
+    string $firstName,
+    string $lastName,
+    string $email,
+    string $phone,
+    string $role,
+    ?string $passwordHash
+): void {
+    if ($passwordHash === null) {
+        $statement = $databaseConnection->prepare(
+            'UPDATE users
+             SET
+                first_name = :first_name,
+                last_name = :last_name,
+                email = :email,
+                phone = :phone,
+                role = :role
+             WHERE id_user = :id_user'
+        );
+
+        $statement->execute([
+            'id_user' => $userId,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'email' => $email,
+            'phone' => $phone,
+            'role' => $role,
+        ]);
+
+        return;
+    }
+
+    $statement = $databaseConnection->prepare(
+        'UPDATE users
+         SET
+            first_name = :first_name,
+            last_name = :last_name,
+            email = :email,
+            phone = :phone,
+            role = :role,
+            password_hash = :password_hash
+         WHERE id_user = :id_user'
+    );
+
+    $statement->execute([
+        'id_user' => $userId,
+        'first_name' => $firstName,
+        'last_name' => $lastName,
+        'email' => $email,
+        'phone' => $phone,
+        'role' => $role,
+        'password_hash' => $passwordHash,
+    ]);
+}

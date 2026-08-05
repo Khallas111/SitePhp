@@ -54,6 +54,7 @@ require __DIR__ . '/../../partials/header.php';
                 <th scope="col">Adresse email</th>
                 <th scope="col">Téléphone</th>
                 <th scope="col">Rôle</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
 
@@ -90,6 +91,14 @@ require __DIR__ . '/../../partials/header.php';
 
                     <td>
                         <?= escape($user['role']) ?>
+                    </td>
+
+                    <td>
+                        <a href="index.php?route=admin/users/edit&amp;id=<?= escape(
+                            (string) $user['id_user']
+                        ) ?>">
+                            Modifier
+                        </a>
                     </td>
                 </tr>
             <?php endforeach; ?>
