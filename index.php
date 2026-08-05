@@ -72,5 +72,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/users/delete' => deleteAdminUserAction(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };
