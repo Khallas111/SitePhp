@@ -45,3 +45,47 @@ function findUserByEmail(
 
     return $user;
 }
+
+/**
+ * Retourne la liste des utilisateurs.
+ *
+ * Le hash du mot de passe n’est volontairement pas sélectionné.
+ *
+ * @return list<array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }>
+ */
+function findAllUsers(PDO $databaseConnection): array
+{
+    $statement = $databaseConnection->query(
+        'SELECT
+            id_user,
+            first_name,
+            last_name,
+            email,
+            phone,
+            role
+         FROM users
+         ORDER BY last_name ASC, first_name ASC'
+    );
+
+    $users = [];
+
+    foreach ($statement->fetchAll() as $user) {
+        $users[] = [
+            'id_user' => (int) $user['id_user'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+            'email' => $user['email'],
+            'phone' => $user['phone'],
+            'role' => $user['role'],
+        ];
+    }
+
+    return $users;
+}

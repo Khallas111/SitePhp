@@ -174,6 +174,33 @@ function requireLogin(): array
 }
 
 /**
+ * Retourne l’administrateur connecté.
+ *
+ * Redirige un visiteur vers la connexion et affiche
+ * une erreur 403 pour un utilisateur non administrateur.
+ *
+ * @return array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * }
+ */
+function requireAdmin(): array
+{
+    $currentUser = requireLogin();
+
+    if ($currentUser['role'] !== 'ADMIN') {
+        showForbiddenPage();
+        exit;
+    }
+
+    return $currentUser;
+}
+
+/**
  * Retourne le jeton CSRF de la session courante.
  */
 function getCsrfToken(): string

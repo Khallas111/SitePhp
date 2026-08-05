@@ -47,6 +47,12 @@
                     Proposer un trajet
                 </a>
 
+                <?php if ($currentUser['role'] === 'ADMIN'): ?>
+                    <a href="index.php?route=admin/users">
+                        Administration
+                    </a>
+                <?php endif; ?>
+
                 <span>
                     <?= escape($currentUser['first_name']) ?>
                     <?= escape($currentUser['last_name']) ?>
