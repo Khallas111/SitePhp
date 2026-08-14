@@ -1,0 +1,31 @@
+{
+  "name": "sitephp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "sass:build": "sass --load-path=node_modules --quiet-deps assets/scss/main.scss assets/css/main.css --style=expanded --no-source-map",
+    "sass:watch": "sass --load-path=node_modules --quiet-deps --watch assets/scss/main.scss:assets/css/main.css --style=expanded --no-source-map"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Khallas111/SitePhp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Khallas111/SitePhp/issues"
+  },
+  "homepage": "https://github.com/Khallas111/SitePhp#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  },
+  "devDependencies": {
+    "sass": "^1.102.0"
+  }
+}
