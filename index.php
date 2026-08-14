@@ -88,5 +88,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/agencies/delete' => deleteAdminAgencyAction(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };

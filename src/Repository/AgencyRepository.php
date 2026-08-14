@@ -164,3 +164,20 @@ function updateAgency(
         'id_agency' => $agencyId,
     ]);
 }
+
+/**
+ * Supprime une agence à partir de son identifiant.
+ */
+function deleteAgencyById(
+    PDO $databaseConnection,
+    int $agencyId
+): void {
+    $statement = $databaseConnection->prepare(
+        'DELETE FROM agencies
+         WHERE id_agency = :id_agency'
+    );
+
+    $statement->execute([
+        'id_agency' => $agencyId,
+    ]);
+}

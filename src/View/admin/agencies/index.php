@@ -4,6 +4,8 @@
  * @var string $applicationName
  * @var string $pageTitle
  * @var string $csrfToken
+ * @var string $successMessage
+ * @var string $errorMessage
  * @var array{
  *     id_user: int,
  *     first_name: string,
@@ -23,6 +25,23 @@ require __DIR__ . '/../../partials/header.php';
 ?>
 
 <h1>Gestion des agences</h1>
+
+<?php if ($successMessage !== ''): ?>
+    <p>
+        <?= escape($successMessage) ?>
+    </p>
+<?php endif; ?>
+
+<?php if ($errorMessage !== ''): ?>
+    <div>
+        <strong>Suppression impossible</strong>
+
+        <p>
+            <?= escape($errorMessage) ?>
+        </p>
+    </div>
+<?php endif; ?>
+
 
 <p>
     <a href="index.php?route=admin/agencies/create">
@@ -78,6 +97,19 @@ require __DIR__ . '/../../partials/header.php';
                         ) ?>">
                             Modifier
                         </a>
+
+                        <form method="post" action="index.php?route=admin/agencies/delete"
+                            onsubmit="return confirm('Voulez-vous vraiment supprimer cette agence ?');">
+                            <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+                            <input type="hidden" name="agency_id" value="<?= escape(
+                                (string) $agency['id_agency']
+                            ) ?>">
+
+                            <button type="submit">
+                                Supprimer
+                            </button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
