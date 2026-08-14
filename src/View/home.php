@@ -22,64 +22,107 @@ require __DIR__ . '/partials/header.php';
 
 ?>
 
-<h1><?= escape($applicationName) ?></h1>
+<section class="mb-5">
+    <h1 class="display-5 fw-bold">
+        <?= escape($applicationName) ?>
+    </h1>
 
-<p><?= escape($description) ?></p>
+    <p class="lead">
+        <?= escape($description) ?>
+    </p>
+</section>
 
-<h2>Trajets planifiés</h2>
+<h2 class="mb-4">
+    Trajets disponibles
+</h2>
 
 <?php if ($successMessage !== ''): ?>
-    <p>
+    <div class="alert alert-success" role="alert">
         <?= escape($successMessage) ?>
-    </p>
+    </div>
 <?php endif; ?>
 
 <?php if ($trips === []): ?>
-    <p>Aucun trajet disponible pour le moment.</p>
+
+    <div class="alert alert-info" role="status">
+        Aucun trajet disponible pour le moment.
+    </div>
+
 <?php else: ?>
-    <?php foreach ($trips as $trip): ?>
-        <article>
-            <h3>
-                <?= escape($trip['departure_city']) ?>
-                →
-                <?= escape($trip['arrival_city']) ?>
-            </h3>
 
-            <p>
-                Départ :
-                <?= escape(
-                    formatDateTime($trip['departure_at'])
-                ) ?>
-            </p>
+    <div class="row g-4">
 
-            <p>
-                Arrivée :
-                <?= escape(
-                    formatDateTime($trip['arrival_at'])
-                ) ?>
-            </p>
+        <?php foreach ($trips as $trip): ?>
 
-            <p>
-                Places disponibles :
-                <?= escape((string) $trip['available_seats']) ?>
-                sur
-                <?= escape((string) $trip['total_seats']) ?>
-            </p>
+            <div class="col-12 col-md-6 col-xl-4">
+                <article class="card h-100 shadow-sm">
+                    <div class="card-body">
 
-            <?php if ($currentUser !== null): ?>
-                <p>
-                    <a class="btn btn-primary" href="index.php?route=trips/show&amp;id=<?= escape(
-                        (string) $trip['id_trip']
-                    ) ?>">
-                        Voir les détails
-                    </a>
-                </p>
-            <?php endif; ?>
+                        <h3 class="card-title h5">
+                            <?= escape(
+                                $trip['departure_city']
+                            ) ?>
 
-        </article>
+                            <span aria-hidden="true">
+                                →
+                            </span>
 
-        <hr>
-    <?php endforeach; ?>
+                            <?= escape(
+                                $trip['arrival_city']
+                            ) ?>
+                        </h3>
+
+                        <p class="card-text">
+                            <strong>Départ :</strong><br>
+
+                            <?= escape(
+                                formatDateTime(
+                                    $trip['departure_at']
+                                )
+                            ) ?>
+                        </p>
+
+                        <p class="card-text">
+                            <strong>Arrivée :</strong><br>
+
+                            <?= escape(
+                                formatDateTime(
+                                    $trip['arrival_at']
+                                )
+                            ) ?>
+                        </p>
+
+                        <p class="card-text">
+                            <strong>
+                                Places disponibles :
+                            </strong>
+
+                            <?= escape(
+                                (string) 
+                                $trip['available_seats']
+                            ) ?>
+                        </p>
+
+                    </div>
+
+                    <?php if ($currentUser !== null): ?>
+                        <div class="card-footer bg-transparent">
+                            <a class="btn btn-primary w-100" href="index.php?route=trips/show&amp;id=<?= escape(
+                                (string) 
+                                $trip['id_trip']
+                            ) ?>">
+                                Voir les détails
+                            </a>
+                        </div>
+                    <?php endif; ?>
+
+                </article>
+            </div>
+
+        <?php endforeach; ?>
+
+    </div>
+
 <?php endif; ?>
 
 <?php

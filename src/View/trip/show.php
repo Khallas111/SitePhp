@@ -34,55 +34,109 @@ require __DIR__ . '/../partials/header.php';
 
 ?>
 
-<h1>Détails du trajet</h1>
+<h1 class="mb-4">
+    Détails du trajet
+</h1>
 
-<section>
-    <h2>
-        <?= escape($trip['departure_city']) ?>
-        →
-        <?= escape($trip['arrival_city']) ?>
-    </h2>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
 
-    <p>
-        Départ :
-        <?= escape(formatDateTime($trip['departure_at'])) ?>
-    </p>
+        <h2 class="card-title">
+            <?= escape($trip['departure_city']) ?>
+            →
+            <?= escape($trip['arrival_city']) ?>
+        </h2>
 
-    <p>
-        Arrivée :
-        <?= escape(formatDateTime($trip['arrival_at'])) ?>
-    </p>
+        <dl class="row mb-0">
 
-    <p>
-        Places disponibles :
-        <?= escape((string) $trip['available_seats']) ?>
-        sur
-        <?= escape((string) $trip['total_seats']) ?>
-    </p>
-</section>
+            <dt class="col-sm-4">
+                Départ
+            </dt>
 
-<section>
-    <h2>Personne à contacter</h2>
+            <dd class="col-sm-8">
+                <?= escape(
+                    formatDateTime(
+                        $trip['departure_at']
+                    )
+                ) ?>
+            </dd>
 
-    <p>
-        <?= escape($trip['author_first_name']) ?>
-        <?= escape($trip['author_last_name']) ?>
-    </p>
+            <dt class="col-sm-4">
+                Arrivée
+            </dt>
 
-    <p>
-        Téléphone :
-        <a href="tel:<?= escape($trip['author_phone']) ?>">
-            <?= escape($trip['author_phone']) ?>
-        </a>
-    </p>
+            <dd class="col-sm-8">
+                <?= escape(
+                    formatDateTime(
+                        $trip['arrival_at']
+                    )
+                ) ?>
+            </dd>
 
-    <p>
-        Adresse email :
-        <a href="mailto:<?= escape($trip['author_email']) ?>">
-            <?= escape($trip['author_email']) ?>
-        </a>
-    </p>
-</section>
+            <dt class="col-sm-4">
+                Places disponibles
+            </dt>
+
+            <dd class="col-sm-8">
+                <?= escape(
+                    (string) $trip['available_seats']
+                ) ?>
+                /
+                <?= escape(
+                    (string) $trip['total_seats']
+                ) ?>
+            </dd>
+
+        </dl>
+
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <h2 class="h4">
+            Personne à contacter
+        </h2>
+
+        <p class="mb-2">
+            <strong>
+                <?= escape(
+                    $trip['author_first_name']
+                ) ?>
+
+                <?= escape(
+                    $trip['author_last_name']
+                ) ?>
+            </strong>
+        </p>
+
+        <p class="mb-2">
+            Téléphone :
+
+            <a href="tel:<?= escape(
+                $trip['author_phone']
+            ) ?>">
+                <?= escape(
+                    $trip['author_phone']
+                ) ?>
+            </a>
+        </p>
+
+        <p class="mb-0">
+            Email :
+
+            <a href="mailto:<?= escape(
+                $trip['author_email']
+            ) ?>">
+                <?= escape(
+                    $trip['author_email']
+                ) ?>
+            </a>
+        </p>
+
+    </div>
+</div>
 
 <?php if ($isAuthor): ?>
     <p>
@@ -91,30 +145,35 @@ require __DIR__ . '/../partials/header.php';
 <?php endif; ?>
 
 <?php if ($canManageTrip): ?>
-    <p>
-        <a href="index.php?route=trips/edit&amp;id=<?= escape(
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+
+        <a class="btn btn-warning" href="index.php?route=trips/edit&amp;id=<?= escape(
             (string) $trip['id_trip']
         ) ?>">
             Modifier le trajet
         </a>
-    </p>
 
-    <form method="post" action="index.php?route=trips/delete" onsubmit="return confirm(
-        'Voulez-vous vraiment supprimer ce trajet ?'
-    );">
-        <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+        <form method="post" action="index.php?route=trips/delete"
+            onsubmit="return confirm('Voulez-vous vraiment supprimer ce trajet ?');">
+            <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
-        <input type="hidden" name="trip_id" value="<?= escape((string) $trip['id_trip']) ?>">
+            <input type="hidden" name="trip_id" value="<?= escape(
+                (string) $trip['id_trip']
+            ) ?>">
 
-        <button type="submit">
-            Supprimer le trajet
-        </button>
-    </form>
+            <button type="submit" class="btn btn-danger">
+                Supprimer le trajet
+            </button>
+        </form>
+
+    </div>
+
 <?php endif; ?>
 
 <p>
-    <a href="index.php">
-        Retour à la liste des trajets
+    <a class="btn btn-outline-secondary" href="index.php">
+        Retour aux trajets
     </a>
 </p>
 
