@@ -239,3 +239,26 @@ function countTripsByAuthor(
 
     return (int) $statement->fetchColumn();
 }
+
+/**
+ * Retourne le nombre de trajets utilisant une agence
+ * comme départ ou comme arrivée.
+ */
+function countTripsUsingAgency(
+    PDO $databaseConnection,
+    int $agencyId
+): int {
+    $statement = $databaseConnection->prepare(
+        'SELECT COUNT(*)
+         FROM trips
+         WHERE departure_agency_id = :departure_agency_id
+            OR arrival_agency_id = :arrival_agency_id'
+    );
+
+    $statement->execute([
+        'departure_agency_id' => $agencyId,
+        'arrival_agency_id' => $agencyId,
+    ]);
+
+    return (int) $statement->fetchColumn();
+}

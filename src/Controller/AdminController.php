@@ -529,6 +529,23 @@ function showAdminAgenciesPage(
     $pageTitle = 'Gestion des agences';
     $csrfToken = getCsrfToken();
 
+    $successMessage = '';
+    $errorMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['deleted'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'L’agence a été supprimée avec succès.';
+    }
+
+    if (($_GET['error'] ?? '') === 'has_trips') {
+        $errorMessage =
+            'Cette agence est utilisée par un ou plusieurs '
+            . 'trajets et ne peut pas être supprimée.';
+    }
+
     $agencies = findAllAgencies(
         $databaseConnection
     );
@@ -715,4 +732,79 @@ function showAdminEditAgencyPage(
 
     require __DIR__
         . '/../View/admin/agencies/edit.php';
+}
+
+/**
+ * Supprime une agence lorsqu’elle n’est utilisée
+ * par aucun trajet.
+ */
+function deleteAdminAgencyAction(
+    PDO $databaseConnection
+): void {
+    requireAdmin();
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+
+        echo 'Méthode non autorisée.';
+        return;
+    }
+
+    if (
+        !isCsrfTokenValid(
+            $_POST['csrf_token'] ?? null
+        )
+    ) {
+        showForbiddenPage();
+        return;
+    }
+
+    $agencyIdInput = $_POST['agency_id'] ?? null;
+
+    if (
+        !is_string($agencyIdInput)
+        || !ctype_digit($agencyIdInput)
+        || (int) $agencyIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $agencyId = (int) $agencyIdInput;
+
+    $agency = findAgencyById(
+        $databaseConnection,
+        $agencyId
+    );
+
+    if ($agency === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    $tripCount = countTripsUsingAgency(
+        $databaseConnection,
+        $agencyId
+    );
+
+    if ($tripCount > 0) {
+        header(
+            'Location: index.php'
+            . '?route=admin/agencies'
+            . '&error=has_trips'
+        );
+        exit;
+    }
+
+    deleteAgencyById(
+        $databaseConnection,
+        $agencyId
+    );
+
+    header(
+        'Location: index.php'
+        . '?route=admin/agencies'
+        . '&deleted=1'
+    );
+    exit;
 }
