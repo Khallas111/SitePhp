@@ -68,7 +68,7 @@ require __DIR__ . '/partials/header.php';
 
             <?php if ($currentUser !== null): ?>
                 <p>
-                    <a href="index.php?route=trips/show&amp;id=<?= escape(
+                    <a class="btn btn-primary" href="index.php?route=trips/show&amp;id=<?= escape(
                         (string) $trip['id_trip']
                     ) ?>">
                         Voir les détails

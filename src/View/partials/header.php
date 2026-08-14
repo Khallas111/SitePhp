@@ -29,6 +29,8 @@
         -
         <?= escape($applicationName) ?>
     </title>
+
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
 
 <body>
@@ -73,4 +75,4 @@
         </nav>
     </header>
 
-    <main>
+    <main class="container py-4">
