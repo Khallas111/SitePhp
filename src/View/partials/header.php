@@ -49,7 +49,11 @@
 
                 <?php if ($currentUser['role'] === 'ADMIN'): ?>
                     <a href="index.php?route=admin/users">
-                        Administration
+                        Utilisateurs
+                    </a>
+
+                    <a href="index.php?route=admin/agencies">
+                        Agences
                     </a>
                 <?php endif; ?>
 

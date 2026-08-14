@@ -76,5 +76,13 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/agencies' => showAdminAgenciesPage(
+        $databaseConnection
+    ),
+
+    'admin/agencies/create' => showAdminCreateAgencyPage(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };
