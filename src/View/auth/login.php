@@ -16,10 +16,12 @@ require __DIR__ . '/../partials/header.php';
 <h1>Connexion</h1>
 
 <?php if ($errors !== []): ?>
-    <div>
-        <h2>La connexion a échoué</h2>
+    <div class="alert alert-danger" role="alert">
+        <h2 class="h5">
+            La connexion a échoué
+        </h2>
 
-        <ul>
+        <ul class="mb-0">
             <?php foreach ($errors as $error): ?>
                 <li>
                     <?= escape($error) ?>

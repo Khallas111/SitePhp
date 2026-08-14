@@ -31,9 +31,9 @@ require __DIR__ . '/../../partials/header.php';
 <h1>Gestion des utilisateurs</h1>
 
 <?php if ($successMessage !== ''): ?>
-    <p>
+    <div class="alert alert-success" role="alert">
         <?= escape($successMessage) ?>
-    </p>
+    </div>
 <?php endif; ?>
 
 <?php if ($errorMessage !== ''): ?>

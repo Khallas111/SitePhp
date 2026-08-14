@@ -11861,4 +11861,13 @@ textarea.form-control-lg {
 }
 body {
   min-height: 100vh;
+  background-color: var(--bs-body-bg);
+}
+
+main {
+  min-height: 70vh;
+}
+
+.navbar-brand {
+  letter-spacing: 0.05rem;
 }

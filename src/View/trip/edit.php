@@ -21,16 +21,21 @@ require __DIR__ . '/../partials/header.php';
 <h1>Modifier le trajet</h1>
 
 <?php if ($successMessage !== ''): ?>
-    <p>
+    <div class="alert alert-success" role="alert">
         <?= escape($successMessage) ?>
-    </p>
+    </div>
 <?php endif; ?>
 
 <?php if ($errors !== []): ?>
-    <div>
-        <h2>Le formulaire contient des erreurs</h2>
+    <div
+        class="alert alert-danger"
+        role="alert"
+    >
+        <h2 class="h5">
+            Le formulaire contient des erreurs
+        </h2>
 
-        <ul>
+        <ul class="mb-0">
             <?php foreach ($errors as $error): ?>
                 <li>
                     <?= escape($error) ?>

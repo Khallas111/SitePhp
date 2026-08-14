@@ -35,43 +35,60 @@
 
 <body>
     <header>
-        <nav>
-            <a href="index.php">
-                <?= escape($applicationName) ?>
-            </a>
-
-            <?php if ($currentUser === null): ?>
-                <a href="index.php?route=login">
-                    Connexion
-                </a>
-            <?php else: ?>
-                <a href="index.php?route=trips/create">
-                    Proposer un trajet
+        <nav class="navbar navbar-expand bg-body-tertiary border-bottom">
+            <div class="container d-flex flex-column flex-md-row gap-3">
+                <a class="navbar-brand fw-bold" href="index.php">
+                    <?= escape($applicationName) ?>
                 </a>
 
-                <?php if ($currentUser['role'] === 'ADMIN'): ?>
-                    <a href="index.php?route=admin/users">
-                        Utilisateurs
+                <div class="d-flex flex-column flex-md-row
+                           align-items-md-center gap-2 ms-md-auto">
+                    <a class="nav-link" href="index.php">
+                        Accueil
                     </a>
 
-                    <a href="index.php?route=admin/agencies">
-                        Agences
-                    </a>
-                <?php endif; ?>
+                    <?php if ($currentUser === null): ?>
+                        <a class="btn btn-primary" href="index.php?route=login">
+                            Connexion
+                        </a>
+                    <?php else: ?>
 
-                <span>
-                    <?= escape($currentUser['first_name']) ?>
-                    <?= escape($currentUser['last_name']) ?>
-                </span>
+                        <a class="nav-link" href="index.php?route=trips/create">
+                            Proposer un trajet
+                        </a>
 
-                <form method="post" action="index.php?route=logout">
-                    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+                        <?php if (
+                            $currentUser['role'] === 'ADMIN'
+                        ): ?>
+                            <a class="nav-link" href="index.php?route=admin/users">
+                                Utilisateurs
+                            </a>
 
-                    <button type="submit">
-                        Déconnexion
-                    </button>
-                </form>
-            <?php endif; ?>
+                            <a class="nav-link" href="index.php?route=admin/agencies">
+                                Agences
+                            </a>
+                        <?php endif; ?>
+
+                        <span class="navbar-text">
+                            <?= escape(
+                                $currentUser['first_name']
+                            ) ?>
+                            <?= escape(
+                                $currentUser['last_name']
+                            ) ?>
+                        </span>
+
+                        <form method="post" action="index.php?route=logout" class="m-0">
+                            <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+                            <button type="submit" class="btn btn-outline-secondary">
+                                Déconnexion
+                            </button>
+                        </form>
+
+                    <?php endif; ?>
+                </div>
+            </div>
         </nav>
     </header>
 
