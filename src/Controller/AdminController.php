@@ -613,3 +613,106 @@ function showAdminCreateAgencyPage(
     require __DIR__
         . '/../View/admin/agencies/create.php';
 }
+
+/**
+ * Affiche et traite le formulaire de modification d’une agence.
+ */
+function showAdminEditAgencyPage(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireAdmin();
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Modifier une agence';
+    $csrfToken = getCsrfToken();
+
+    $agencyIdInput = $_GET['id'] ?? null;
+
+    if (
+        !is_string($agencyIdInput)
+        || !ctype_digit($agencyIdInput)
+        || (int) $agencyIdInput < 1
+    ) {
+        showNotFoundPage();
+        return;
+    }
+
+    $agencyId = (int) $agencyIdInput;
+
+    $agency = findAgencyById(
+        $databaseConnection,
+        $agencyId
+    );
+
+    if ($agency === null) {
+        showNotFoundPage();
+        return;
+    }
+
+    $cityInput = $agency['city'];
+
+    $errors = [];
+    $successMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['updated'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'L’agence a été modifiée avec succès.';
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $cityInput = trim(
+            $_POST['city'] ?? ''
+        );
+
+        if (
+            !isCsrfTokenValid(
+                $_POST['csrf_token'] ?? null
+            )
+        ) {
+            $errors[] =
+                'Le formulaire a expiré. Veuillez réessayer.';
+        }
+
+        if (
+            $errors === []
+            && $cityInput === ''
+        ) {
+            $errors[] =
+                'La ville de l’agence est obligatoire.';
+        }
+
+        if (
+            $errors === []
+            && agencyCityExistsForAnotherAgency(
+                $databaseConnection,
+                $cityInput,
+                $agencyId
+            )
+        ) {
+            $errors[] =
+                'Une autre agence existe déjà pour cette ville.';
+        }
+
+        if ($errors === []) {
+            updateAgency(
+                $databaseConnection,
+                $agencyId,
+                $cityInput
+            );
+
+            header(
+                'Location: index.php'
+                . '?route=admin/agencies/edit'
+                . '&id=' . $agencyId
+                . '&updated=1'
+            );
+            exit;
+        }
+    }
+
+    require __DIR__
+        . '/../View/admin/agencies/edit.php';
+}

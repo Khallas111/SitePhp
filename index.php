@@ -84,5 +84,9 @@ match ($route) {
         $databaseConnection
     ),
 
+    'admin/agencies/edit' => showAdminEditAgencyPage(
+        $databaseConnection
+    ),
+
     default => showNotFoundPage(),
 };

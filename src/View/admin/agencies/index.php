@@ -52,6 +52,10 @@ require __DIR__ . '/../../partials/header.php';
                 <th scope="col">
                     Ville
                 </th>
+
+                <th scope="col">
+                    Actions
+                </th>
             </tr>
         </thead>
 
@@ -66,6 +70,14 @@ require __DIR__ . '/../../partials/header.php';
 
                     <td>
                         <?= escape($agency['city']) ?>
+                    </td>
+
+                    <td>
+                        <a href="index.php?route=admin/agencies/edit&amp;id=<?= escape(
+                            (string) $agency['id_agency']
+                        ) ?>">
+                            Modifier
+                        </a>
                     </td>
                 </tr>
             <?php endforeach; ?>
