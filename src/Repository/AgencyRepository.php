@@ -43,3 +43,44 @@ function agencyExists(
 
     return (int) $statement->fetchColumn() > 0;
 }
+
+/**
+ * Indique si une agence existe déjà pour cette ville.
+ */
+function agencyCityExists(
+    PDO $databaseConnection,
+    string $city
+): bool {
+    $statement = $databaseConnection->prepare(
+        'SELECT COUNT(*)
+         FROM agencies
+         WHERE city = :city'
+    );
+
+    $statement->execute([
+        'city' => $city,
+    ]);
+
+    return (int) $statement->fetchColumn() > 0;
+}
+
+/**
+ * Crée une nouvelle agence.
+ *
+ * @return int Identifiant de la nouvelle agence.
+ */
+function createAgency(
+    PDO $databaseConnection,
+    string $city
+): int {
+    $statement = $databaseConnection->prepare(
+        'INSERT INTO agencies (city)
+         VALUES (:city)'
+    );
+
+    $statement->execute([
+        'city' => $city,
+    ]);
+
+    return (int) $databaseConnection->lastInsertId();
+}

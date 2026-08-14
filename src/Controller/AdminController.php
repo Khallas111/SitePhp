@@ -517,3 +517,99 @@ function deleteAdminUserAction(
     exit;
 }
 
+/**
+ * Affiche la liste des agences.
+ */
+function showAdminAgenciesPage(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireAdmin();
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Gestion des agences';
+    $csrfToken = getCsrfToken();
+
+    $agencies = findAllAgencies(
+        $databaseConnection
+    );
+
+    require __DIR__
+        . '/../View/admin/agencies/index.php';
+}
+
+/**
+ * Affiche et traite le formulaire de création d’une agence.
+ */
+function showAdminCreateAgencyPage(
+    PDO $databaseConnection
+): void {
+    $currentUser = requireAdmin();
+
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Ajouter une agence';
+    $csrfToken = getCsrfToken();
+
+    $cityInput = '';
+
+    $errors = [];
+    $successMessage = '';
+
+    if (
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['created'] ?? '') === '1'
+    ) {
+        $successMessage =
+            'L’agence a été créée avec succès.';
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $cityInput = trim(
+            $_POST['city'] ?? ''
+        );
+
+        if (
+            !isCsrfTokenValid(
+                $_POST['csrf_token'] ?? null
+            )
+        ) {
+            $errors[] =
+                'Le formulaire a expiré. Veuillez réessayer.';
+        }
+
+        if (
+            $errors === []
+            && $cityInput === ''
+        ) {
+            $errors[] =
+                'La ville de l’agence est obligatoire.';
+        }
+
+        if (
+            $errors === []
+            && agencyCityExists(
+                $databaseConnection,
+                $cityInput
+            )
+        ) {
+            $errors[] =
+                'Une agence existe déjà pour cette ville.';
+        }
+
+        if ($errors === []) {
+            createAgency(
+                $databaseConnection,
+                $cityInput
+            );
+
+            header(
+                'Location: index.php'
+                . '?route=admin/agencies/create'
+                . '&created=1'
+            );
+            exit;
+        }
+    }
+
+    require __DIR__
+        . '/../View/admin/agencies/create.php';
+}
