@@ -18,7 +18,9 @@ require __DIR__ . '/../partials/header.php';
 
 ?>
 
-<h1>Modifier le trajet</h1>
+<h1 class="mb-4">
+    Modifier un trajet
+</h1>
 
 <?php if ($successMessage !== ''): ?>
     <div class="alert alert-success" role="alert">
@@ -27,10 +29,7 @@ require __DIR__ . '/../partials/header.php';
 <?php endif; ?>
 
 <?php if ($errors !== []): ?>
-    <div
-        class="alert alert-danger"
-        role="alert"
-    >
+    <div class="alert alert-danger" role="alert">
         <h2 class="h5">
             Le formulaire contient des erreurs
         </h2>
@@ -45,97 +44,114 @@ require __DIR__ . '/../partials/header.php';
     </div>
 <?php endif; ?>
 
-<form method="post">
-    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+<div class="card shadow-sm">
+    <div class="card-body p-4">
 
-    <div>
-        <label for="departureAgencyId">
-            Agence de départ
-        </label>
+        <form method="post">
 
-        <select id="departureAgencyId" name="departureAgencyId" required>
-            <option value="">
-                Choisissez une agence
-            </option>
+            <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
-            <?php foreach ($agencies as $agency): ?>
-                <option value="<?= escape(
-                    (string) $agency['id_agency']
-                ) ?>" <?php if (
-                     $departureAgencyIdInput
-                     === (string) $agency['id_agency']
-                 ): ?>
-                        selected
-                    <?php endif; ?>
-                    >
-                    <?= escape($agency['city']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+            <div class="row g-3">
+
+                <div class="col-12 col-md-6">
+                    <label for="departureAgencyId" class="form-label">
+                        Agence de départ
+                    </label>
+
+                    <select id="departureAgencyId" name="departureAgencyId" class="form-select" required>
+                        <option value="">
+                            Choisissez une agence
+                        </option>
+
+                        <?php foreach ($agencies as $agency): ?>
+                            <option value="<?= escape(
+                                (string) $agency['id_agency']
+                            ) ?>" <?php if (
+                                 $departureAgencyIdInput
+                                 === (string) $agency['id_agency']
+                             ): ?> selected
+                                <?php endif; ?>>
+                                <?= escape($agency['city']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="arrivalAgencyId" class="form-label">
+                        Agence d’arrivée
+                    </label>
+
+                    <select id="arrivalAgencyId" name="arrivalAgencyId" class="form-select" required>
+                        <option value="">
+                            Choisissez une agence
+                        </option>
+
+                        <?php foreach ($agencies as $agency): ?>
+                            <option value="<?= escape(
+                                (string) $agency['id_agency']
+                            ) ?>" <?php if (
+                                 $arrivalAgencyIdInput
+                                 === (string) $agency['id_agency']
+                             ): ?> selected
+                                <?php endif; ?>>
+                                <?= escape($agency['city']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="departureDate" class="form-label">
+                        Date et heure de départ
+                    </label>
+
+                    <input type="datetime-local" id="departureDate" name="departureDate" class="form-control"
+                        value="<?= escape($departureDateInput) ?>" required>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="arrivalDate" class="form-label">
+                        Date et heure d’arrivée
+                    </label>
+
+                    <input type="datetime-local" id="arrivalDate" name="arrivalDate" class="form-control"
+                        value="<?= escape($arrivalDateInput) ?>" required>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="totalSeats" class="form-label">
+                        Nombre total de places
+                    </label>
+
+                    <input type="number" id="totalSeats" name="totalSeats" class="form-control" min="1"
+                        value="<?= escape($totalSeatsInput) ?>" required>
+
+                    <div class="form-text">
+                        Indiquez le nombre total de places
+                        proposées dans le véhicule.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+               <button
+    type="submit"
+    class="btn btn-warning"
+>
+    Enregistrer les modifications
+</button>
+
+                <a href="index.php" class="btn btn-outline-secondary">
+                    Annuler
+                </a>
+            </div>
+
+        </form>
+
     </div>
-
-    <div>
-        <label for="arrivalAgencyId">
-            Agence d’arrivée
-        </label>
-
-        <select id="arrivalAgencyId" name="arrivalAgencyId" required>
-            <option value="">
-                Choisissez une agence
-            </option>
-
-            <?php foreach ($agencies as $agency): ?>
-                <option value="<?= escape(
-                    (string) $agency['id_agency']
-                ) ?>" <?php if (
-                     $arrivalAgencyIdInput
-                     === (string) $agency['id_agency']
-                 ): ?>
-                        selected
-                    <?php endif; ?>
-                    >
-                    <?= escape($agency['city']) ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-
-    <div>
-        <label for="departureDate">
-            Date et heure de départ
-        </label>
-
-        <input type="datetime-local" id="departureDate" name="departureDate" value="<?= escape($departureDateInput) ?>"
-            required>
-    </div>
-
-    <div>
-        <label for="arrivalDate">
-            Date et heure d’arrivée
-        </label>
-
-        <input type="datetime-local" id="arrivalDate" name="arrivalDate" value="<?= escape($arrivalDateInput) ?>"
-            required>
-    </div>
-
-    <div>
-        <label for="totalSeats">
-            Nombre total de places
-        </label>
-
-        <input type="number" id="totalSeats" name="totalSeats" min="1" value="<?= escape($totalSeatsInput) ?>" required>
-    </div>
-
-    <button type="submit">
-        Enregistrer les modifications
-    </button>
-</form>
-
-<p>
-    <a href="index.php">
-        Annuler et revenir à l’accueil
-    </a>
-</p>
+</div>
 
 <?php
 
