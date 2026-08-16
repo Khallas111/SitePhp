@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use App\Repository\AgencyRepository;
+use App\Repository\TripRepository;
 
 /**
  * Affiche la liste des utilisateurs aux administrateurs.
@@ -427,7 +428,8 @@ function showAdminEditUserPage(
  * de sécurité sont respectées.
  */
 function deleteAdminUserAction(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    TripRepository $tripRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -491,8 +493,7 @@ function deleteAdminUserAction(
         exit;
     }
 
-    $tripCount = countTripsByAuthor(
-        $databaseConnection,
+    $tripCount = $tripRepository->countByAuthor(
         $userId
     );
 
@@ -729,8 +730,8 @@ function showAdminEditAgencyPage(
  * par aucun trajet.
  */
 function deleteAdminAgencyAction(
-    PDO $databaseConnection,
-    AgencyRepository $agencyRepository
+    AgencyRepository $agencyRepository,
+    TripRepository $tripRepository
 ): void {
     requireAdmin();
 
@@ -770,8 +771,7 @@ function deleteAdminAgencyAction(
         return;
     }
 
-    $tripCount = countTripsUsingAgency(
-        $databaseConnection,
+    $tripCount = $tripRepository->countUsingAgency(
         $agencyId
     );
 

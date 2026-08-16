@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 use App\Repository\AgencyRepository;
+use App\Repository\TripRepository;
 use App\Validation\TripValidator;
+
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -16,34 +18,39 @@ $databaseConnection = getDatabaseConnection();
 $agencyRepository =
     new AgencyRepository($databaseConnection);
 
+$tripRepository = new TripRepository($databaseConnection);
 $tripValidator = new TripValidator();
 $route = trim($_GET['route'] ?? '', '/');
 
 match ($route) {
-    '', 'home' => showHomePage($databaseConnection),
+    '', 'home' => showHomePage($tripRepository),
 
     'login' => showLoginPage($databaseConnection),
 
     'logout' => logoutUser(),
 
-    'trips/create' => showCreateTripPage(
-        $databaseConnection,
+    'trips/create' =>
+    showCreateTripPage(
         $agencyRepository,
+        $tripRepository,
         $tripValidator
     ),
 
-    'trips/show' => showTripDetailsPage(
-        $databaseConnection
+    'trips/show' =>
+    showTripDetailsPage(
+        $tripRepository
     ),
 
-    'trips/edit' => showEditTripPage(
-        $databaseConnection,
+    'trips/edit' =>
+    showEditTripPage(
         $agencyRepository,
+        $tripRepository,
         $tripValidator
     ),
 
-    'trips/delete' => deleteTripAction(
-        $databaseConnection
+    'trips/delete' =>
+    deleteTripAction(
+        $tripRepository
     ),
 
     'admin/users' => showAdminUsersPage(
@@ -58,8 +65,10 @@ match ($route) {
         $databaseConnection
     ),
 
-    'admin/users/delete' => deleteAdminUserAction(
-        $databaseConnection
+    'admin/users/delete' =>
+    deleteAdminUserAction(
+        $databaseConnection,
+        $tripRepository
     ),
 
     'admin/agencies' =>
@@ -78,9 +87,10 @@ match ($route) {
         $agencyRepository
     ),
 
-    'admin/agencies/delete' => deleteAdminAgencyAction(
-        $databaseConnection,
-        $agencyRepository
+    'admin/agencies/delete' =>
+    deleteAdminAgencyAction(
+        $agencyRepository,
+        $tripRepository
     ),
 
     default => showNotFoundPage(),

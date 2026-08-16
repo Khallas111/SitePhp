@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Repository\TripRepository;
+
 /**
  * Prépare et affiche la page d’accueil.
  */
-function showHomePage(PDO $databaseConnection): void
-{
+function showHomePage(
+    TripRepository $tripRepository
+): void {
     $applicationName = 'Klaxon';
     $pageTitle = 'Accueil';
     $description = 'Application de covoiturage inter-sites';
@@ -24,9 +27,8 @@ function showHomePage(PDO $databaseConnection): void
             'Le trajet a été supprimé avec succès.';
     }
 
-    $trips = findAvailableFutureTrips(
-        $databaseConnection
-    );
+    $trips =
+        $tripRepository->findAvailableFuture();
 
     require __DIR__ . '/../View/home.php';
 }
