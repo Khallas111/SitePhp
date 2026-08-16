@@ -24,7 +24,19 @@ require __DIR__ . '/../../partials/header.php';
 
 ?>
 
-<h1>Gestion des agences</h1>
+<h1 class="mb-4">
+    Gestion des agences
+</h1>
+
+<nav class="nav nav-pills gap-2 mb-4" aria-label="Navigation de l’administration">
+    <a class="nav-link" href="index.php?route=admin/users">
+        Utilisateurs
+    </a>
+
+    <a class="nav-link" href="index.php?route=admin/agencies">
+        Agences
+    </a>
+</nav>
 
 <?php if ($successMessage !== ''): ?>
     <div class="alert alert-success" role="alert">
@@ -33,88 +45,117 @@ require __DIR__ . '/../../partials/header.php';
 <?php endif; ?>
 
 <?php if ($errorMessage !== ''): ?>
-    <div>
-        <strong>Suppression impossible</strong>
-
-        <p>
-            <?= escape($errorMessage) ?>
-        </p>
+    <div class="alert alert-danger" role="alert">
+        <?= escape($errorMessage) ?>
     </div>
 <?php endif; ?>
 
+<div class="d-flex flex-wrap
+           justify-content-between
+           align-items-center
+           gap-3
+           mb-4">
+    <p class="mb-0">
+        <?= escape((string) count($agencies)) ?>
+        agence(s) enregistrée(s).
+    </p>
 
-<p>
-    <a href="index.php?route=admin/agencies/create">
+    <a href="index.php?route=admin/agencies/create" class="btn btn-primary">
         Ajouter une agence
     </a>
-</p>
-
-<p>
-    <?= escape((string) count($agencies)) ?>
-    agence(s) enregistrée(s).
-</p>
+</div>
 
 <?php if ($agencies === []): ?>
-    <p>Aucune agence n’est enregistrée.</p>
+
+    <div class="alert alert-info" role="status">
+        Aucune agence n’est enregistrée.
+    </div>
+
 <?php else: ?>
-    <table>
-        <caption>
-            Liste des agences de Klaxon
-        </caption>
 
-        <thead>
-            <tr>
-                <th scope="col">
-                    Identifiant
-                </th>
+    <div class="table-responsive">
+        <table class="table table-striped
+                   table-hover align-middle">
+            <caption>
+                Liste des agences de Klaxon
+            </caption>
 
-                <th scope="col">
-                    Ville
-                </th>
-
-                <th scope="col">
-                    Actions
-                </th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <?php foreach ($agencies as $agency): ?>
+            <thead>
                 <tr>
-                    <td>
-                        <?= escape(
-                            (string) $agency['id_agency']
-                        ) ?>
-                    </td>
+                    <th scope="col">
+                        ID
+                    </th>
 
-                    <td>
-                        <?= escape($agency['city']) ?>
-                    </td>
+                    <th scope="col">
+                        Ville
+                    </th>
 
-                    <td>
-                        <a href="index.php?route=admin/agencies/edit&amp;id=<?= escape(
-                            (string) $agency['id_agency']
-                        ) ?>">
-                            Modifier
-                        </a>
-
-                        <form method="post" action="index.php?route=admin/agencies/delete"
-                            onsubmit="return confirm('Voulez-vous vraiment supprimer cette agence ?');">
-                            <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
-
-                            <input type="hidden" name="agency_id" value="<?= escape(
-                                (string) $agency['id_agency']
-                            ) ?>">
-
-                            <button type="submit">
-                                Supprimer
-                            </button>
-                        </form>
-                    </td>
+                    <th scope="col">
+                        Actions
+                    </th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+
+                <?php foreach ($agencies as $agency): ?>
+
+                    <tr>
+                        <td>
+                            <?= escape(
+                                (string) 
+                                $agency['id_agency']
+                            ) ?>
+                        </td>
+
+                        <td>
+                            <strong>
+                                <?= escape(
+                                    $agency['city']
+                                ) ?>
+                            </strong>
+                        </td>
+
+                        <td>
+                            <div class="d-flex
+                                       flex-wrap
+                                       gap-2">
+                                <a href="index.php?route=admin/agencies/edit&amp;id=<?= escape(
+                                    (string) 
+                                    $agency['id_agency']
+                                ) ?>" class="btn
+                                           btn-warning
+                                           btn-sm">
+                                    Modifier
+                                </a>
+
+                                <form method="post" action="index.php?route=admin/agencies/delete" class="m-0"
+                                    onsubmit="return confirm('Voulez-vous vraiment supprimer cette agence ?');">
+                                    <input type="hidden" name="csrf_token" value="<?= escape(
+                                        $csrfToken
+                                    ) ?>">
+
+                                    <input type="hidden" name="agency_id" value="<?= escape(
+                                        (string) 
+                                        $agency['id_agency']
+                                    ) ?>">
+
+                                    <button type="submit" class="btn
+                                               btn-danger
+                                               btn-sm">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+
+                <?php endforeach; ?>
+
+            </tbody>
+        </table>
+    </div>
+
 <?php endif; ?>
 
 <p>
