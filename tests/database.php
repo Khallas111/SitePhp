@@ -33,3 +33,25 @@ function getTestDatabaseConnection(): PDO
         ]
     );
 }
+
+function resetTestDatabase(
+    PDO $databaseConnection
+): void {
+    $schemaPath =
+        __DIR__
+        . '/../database/test-schema.sql';
+
+    $schema = file_get_contents(
+        $schemaPath
+    );
+
+    if ($schema === false) {
+        throw new RuntimeException(
+            'Impossible de lire le schéma de test.'
+        );
+    }
+
+    $databaseConnection->exec(
+        $schema
+    );
+}

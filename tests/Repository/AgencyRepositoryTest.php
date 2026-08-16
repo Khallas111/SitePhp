@@ -20,14 +20,24 @@ final class AgencyRepositoryTest extends TestCase
         $this->databaseConnection =
             \getTestDatabaseConnection();
 
-        $this->databaseConnection->exec(
-            'DELETE FROM agencies'
-        );
+        $this->databaseConnection
+            ->beginTransaction();
 
         $this->agencyRepository =
             new AgencyRepository(
                 $this->databaseConnection
             );
+    }
+
+    protected function tearDown(): void
+    {
+        if (
+            $this->databaseConnection
+                ->inTransaction()
+        ) {
+            $this->databaseConnection
+                ->rollBack();
+        }
     }
 
     public function testCreateAgency(): void
