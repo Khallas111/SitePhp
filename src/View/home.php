@@ -108,9 +108,10 @@ require __DIR__ . '/partials/header.php';
                     <?php if ($currentUser !== null): ?>
                         <div class="card-footer bg-transparent">
                             <a class="btn btn-primary w-100" href="index.php?route=trips/show&amp;id=<?= escape(
-                                (string) 
-                                $trip['id_trip']
-                            ) ?>">
+                                (string) $trip['id_trip']
+                            ) ?>" data-bs-toggle="modal" data-bs-target="#tripModal<?= escape(
+                                 (string) $trip['id_trip']
+                             ) ?>">
                                 Voir les détails
                             </a>
                         </div>
@@ -122,6 +123,176 @@ require __DIR__ . '/partials/header.php';
         <?php endforeach; ?>
 
     </div>
+
+    <?php if ($currentUser !== null): ?>
+
+        <?php foreach ($trips as $trip): ?>
+
+            <div class="modal fade" id="tripModal<?= escape(
+                (string) $trip['id_trip']
+            ) ?>" tabindex="-1" aria-labelledby="tripModalLabel<?= escape(
+                 (string) $trip['id_trip']
+             ) ?>" aria-hidden="true">
+                <div class="modal-dialog
+                       modal-dialog-centered
+                       modal-lg">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+
+                            <h2 class="modal-title fs-5" id="tripModalLabel<?= escape(
+                                (string) $trip['id_trip']
+                            ) ?>">
+                                <?= escape(
+                                    $trip['departure_city']
+                                ) ?>
+
+                                <span aria-hidden="true">
+                                    →
+                                </span>
+
+                                <?= escape(
+                                    $trip['arrival_city']
+                                ) ?>
+                            </h2>
+
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <section class="mb-4">
+
+                                <h3 class="h6">
+                                    Informations du trajet
+                                </h3>
+
+                                <dl class="row mb-0">
+
+                                    <dt class="col-sm-5">
+                                        Départ
+                                    </dt>
+
+                                    <dd class="col-sm-7">
+                                        <?= escape(
+                                            formatDateTime(
+                                                $trip[
+                                                    'departure_at'
+                                                ]
+                                            )
+                                        ) ?>
+                                    </dd>
+
+                                    <dt class="col-sm-5">
+                                        Arrivée
+                                    </dt>
+
+                                    <dd class="col-sm-7">
+                                        <?= escape(
+                                            formatDateTime(
+                                                $trip[
+                                                    'arrival_at'
+                                                ]
+                                            )
+                                        ) ?>
+                                    </dd>
+
+                                    <dt class="col-sm-5">
+                                        Places disponibles
+                                    </dt>
+
+                                    <dd class="col-sm-7">
+                                        <?= escape(
+                                            (string) 
+                                            $trip[
+                                                'available_seats'
+                                            ]
+                                        ) ?>
+
+                                        sur
+
+                                        <?= escape(
+                                            (string) 
+                                            $trip['total_seats']
+                                        ) ?>
+                                    </dd>
+
+                                </dl>
+
+                            </section>
+
+                            <section>
+
+                                <h3 class="h6">
+                                    Personne à contacter
+                                </h3>
+
+                                <p class="mb-2">
+                                    <strong>
+                                        <?= escape(
+                                            $trip[
+                                                'author_first_name'
+                                            ]
+                                        ) ?>
+
+                                        <?= escape(
+                                            $trip[
+                                                'author_last_name'
+                                            ]
+                                        ) ?>
+                                    </strong>
+                                </p>
+
+                                <p class="mb-2">
+                                    Téléphone :
+
+                                    <a href="tel:<?= escape(
+                                        $trip['author_phone']
+                                    ) ?>">
+                                        <?= escape(
+                                            $trip['author_phone']
+                                        ) ?>
+                                    </a>
+                                </p>
+
+                                <p class="mb-0">
+                                    Email :
+
+                                    <a href="mailto:<?= escape(
+                                        $trip['author_email']
+                                    ) ?>">
+                                        <?= escape(
+                                            $trip['author_email']
+                                        ) ?>
+                                    </a>
+                                </p>
+
+                            </section>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <a class="btn btn-outline-primary" href="index.php?route=trips/show&amp;id=<?= escape(
+                                (string) $trip['id_trip']
+                            ) ?>">
+                                Ouvrir la fiche complète
+                            </a>
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Fermer
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        <?php endforeach; ?>
+
+    <?php endif; ?>
 
 <?php endif; ?>
 
