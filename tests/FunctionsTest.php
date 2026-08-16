@@ -2,12 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Validation\TripValidator;
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 final class FunctionsTest extends TestCase
 {
+    private TripValidator $tripValidator;
+
+    protected function setUp(): void
+    {
+        $this->tripValidator = new TripValidator();
+    }
     public function testParseDateTimeLocalReturnsDateForValidValue(): void
     {
         $date = parseDateTimeLocal('2026-08-20T14:30');
@@ -32,7 +39,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripAcceptsValidTrip(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '4',
@@ -45,7 +52,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsSameAgencies(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '1',
             '4',
@@ -58,7 +65,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsZeroSeats(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '0',
@@ -71,7 +78,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsNegativeSeats(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '-5',
@@ -84,7 +91,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsNonNumericSeats(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             'quatre',
@@ -97,7 +104,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsArrivalBeforeDeparture(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '4',
@@ -110,7 +117,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsSameDepartureAndArrivalTime(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '4',
@@ -123,7 +130,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsInvalidDate(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '1',
             '2',
             '4',
@@ -145,7 +152,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsInvalidAgencyId(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             'bonjour',
             '2',
             '4',
@@ -158,7 +165,7 @@ final class FunctionsTest extends TestCase
 
     public function testValidateTripRejectsZeroAgencyId(): void
     {
-        $errors = validateTrip(
+        $errors = $this->tripValidator->validate(
             '0',
             '2',
             '4',

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Validation\TripValidator;
 
 /**
  * Prépare, traite et affiche le formulaire de création d’un trajet.
@@ -65,7 +66,9 @@ function showCreateTripPage(PDO $databaseConnection): void
         }
 
         if ($errors === []) {
-            $errors = validateTrip(
+            $tripValidator = new TripValidator();
+
+            $errors = $tripValidator->validate(
                 $departureAgencyIdInput,
                 $arrivalAgencyIdInput,
                 $totalSeatsInput,
@@ -291,7 +294,9 @@ function showEditTripPage(
         }
 
         if ($errors === []) {
-            $errors = validateTrip(
+            $tripValidator = new TripValidator();
+
+            $errors = $tripValidator->validate(
                 $departureAgencyIdInput,
                 $arrivalAgencyIdInput,
                 $totalSeatsInput,
