@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Repository\AgencyRepository;
 use App\Validation\TripValidator;
 
 error_reporting(E_ALL);
@@ -10,8 +11,11 @@ session_start();
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-
 $databaseConnection = getDatabaseConnection();
+
+$agencyRepository =
+    new AgencyRepository($databaseConnection);
+
 $tripValidator = new TripValidator();
 $route = trim($_GET['route'] ?? '', '/');
 
@@ -24,6 +28,7 @@ match ($route) {
 
     'trips/create' => showCreateTripPage(
         $databaseConnection,
+        $agencyRepository,
         $tripValidator
     ),
 
@@ -31,9 +36,9 @@ match ($route) {
         $databaseConnection
     ),
 
-    'trips/edit' =>
-    showEditTripPage(
+    'trips/edit' => showEditTripPage(
         $databaseConnection,
+        $agencyRepository,
         $tripValidator
     ),
 
@@ -57,20 +62,25 @@ match ($route) {
         $databaseConnection
     ),
 
-    'admin/agencies' => showAdminAgenciesPage(
-        $databaseConnection
+    'admin/agencies' =>
+    showAdminAgenciesPage(
+        $databaseConnection,
+        $agencyRepository
     ),
 
     'admin/agencies/create' => showAdminCreateAgencyPage(
-        $databaseConnection
+        $databaseConnection,
+        $agencyRepository
     ),
 
     'admin/agencies/edit' => showAdminEditAgencyPage(
-        $databaseConnection
+        $databaseConnection,
+        $agencyRepository
     ),
 
     'admin/agencies/delete' => deleteAdminAgencyAction(
-        $databaseConnection
+        $databaseConnection,
+        $agencyRepository
     ),
 
     default => showNotFoundPage(),
