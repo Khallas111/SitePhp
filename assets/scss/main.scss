@@ -29,3 +29,13 @@ main {
 .table th {
     vertical-align: middle;
 }
+
+.modal-content {
+    border: 0;
+    border-radius: 0.75rem;
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--bs-border-color);
+}
