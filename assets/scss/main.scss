@@ -20,3 +20,12 @@ main {
 .card {
     border-radius: 0.5rem;
 }
+
+.table {
+    --bs-table-bg: transparent;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
