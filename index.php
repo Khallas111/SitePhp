@@ -6,32 +6,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 session_start();
-require_once __DIR__ . '/src/functions.php';
-require_once __DIR__ . '/config/database.php';
 
-require_once __DIR__
-    . '/src/Repository/AgencyRepository.php';
-
-require_once __DIR__
-    . '/src/Repository/TripRepository.php';
-
-require_once __DIR__
-    . '/src/Repository/UserRepository.php';
-
-require_once __DIR__
-    . '/src/Controller/HomeController.php';
-
-require_once __DIR__
-    . '/src/Controller/TripController.php';
-
-require_once __DIR__
-    . '/src/Controller/AuthController.php';
-
-require_once __DIR__
-    . '/src/Controller/ErrorController.php';
-
-require_once __DIR__
-    . '/src/Controller/AdminController.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $databaseConnection = getDatabaseConnection();
 

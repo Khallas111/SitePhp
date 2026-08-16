@@ -1,11 +1,23 @@
 {
     "name": "devoir/klaxon",
     "description": "Application intranet de covoiturage inter-sites",
-    "autoload": {
-        "psr-4": {
-            "Devoir\\Klaxon\\": "src/"
-        }
+   "autoload": {
+    "psr-4": {
+        "App\\": "src/"
     },
+    "files": [
+        "src/functions.php",
+        "config/database.php",
+        "src/Repository/AgencyRepository.php",
+        "src/Repository/TripRepository.php",
+        "src/Repository/UserRepository.php",
+        "src/Controller/HomeController.php",
+        "src/Controller/TripController.php",
+        "src/Controller/AuthController.php",
+        "src/Controller/AdminController.php",
+        "src/Controller/ErrorController.php"
+    ]
+},
     "authors": [
         {
             "name": "Khallas111",
@@ -24,4 +36,5 @@
         "phpstan/phpstan": "^2.2",
         "phpunit/phpunit": "^12.5"
     }
+    
 }
