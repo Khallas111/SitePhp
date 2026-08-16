@@ -3,12 +3,13 @@
 declare(strict_types=1);
 use App\Repository\AgencyRepository;
 use App\Repository\TripRepository;
+use App\Repository\UserRepository;
 
 /**
  * Affiche la liste des utilisateurs aux administrateurs.
  */
 function showAdminUsersPage(
-    PDO $databaseConnection
+    UserRepository $userRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -41,7 +42,8 @@ function showAdminUsersPage(
             . 'Supprimez-les avant de supprimer son compte.';
     }
 
-    $users = findAllUsers($databaseConnection);
+    $users =
+        $userRepository->findAll();
 
     require __DIR__
         . '/../View/admin/users/index.php';
@@ -51,7 +53,7 @@ function showAdminUsersPage(
  * Affiche et traite le formulaire de création d’un utilisateur.
  */
 function showAdminCreateUserPage(
-    PDO $databaseConnection
+    UserRepository $userRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -169,8 +171,7 @@ function showAdminCreateUserPage(
 
         if (
             $errors === []
-            && userEmailExists(
-                $databaseConnection,
+            && $userRepository->emailExists(
                 $emailInput
             )
         ) {
@@ -184,14 +185,13 @@ function showAdminCreateUserPage(
                 PASSWORD_DEFAULT
             );
 
-            createUser(
-                $databaseConnection,
+            $userRepository->create(
                 $firstNameInput,
                 $lastNameInput,
                 $emailInput,
                 $passwordHash,
                 $phoneInput,
-                $roleInput
+                $roleInput,
             );
 
             header(
@@ -211,7 +211,7 @@ function showAdminCreateUserPage(
  * Affiche et traite le formulaire de modification d’un utilisateur.
  */
 function showAdminEditUserPage(
-    PDO $databaseConnection
+    UserRepository $userRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -232,10 +232,7 @@ function showAdminEditUserPage(
 
     $userId = (int) $userIdInput;
 
-    $user = findUserById(
-        $databaseConnection,
-        $userId
-    );
+    $user = $userRepository->findById($userId);
 
     if ($user === null) {
         showNotFoundPage();
@@ -344,11 +341,11 @@ function showAdminEditUserPage(
 
         if (
             $errors === []
-            && userEmailExistsForAnotherUser(
-                $databaseConnection,
-                $emailInput,
-                $userId
-            )
+            && $userRepository
+                ->emailExistsForAnotherUser(
+                    $emailInput,
+                    $userId
+                )
         ) {
             $errors[] =
                 'Cette adresse email est déjà utilisée.';
@@ -387,8 +384,7 @@ function showAdminEditUserPage(
         }
 
         if ($errors === []) {
-            updateUser(
-                $databaseConnection,
+            $userRepository->update(
                 $userId,
                 $firstNameInput,
                 $lastNameInput,
@@ -428,7 +424,7 @@ function showAdminEditUserPage(
  * de sécurité sont respectées.
  */
 function deleteAdminUserAction(
-    PDO $databaseConnection,
+    UserRepository $userRepository,
     TripRepository $tripRepository
 ): void {
     $currentUser = requireAdmin();
@@ -462,8 +458,7 @@ function deleteAdminUserAction(
 
     $userId = (int) $userIdInput;
 
-    $user = findUserById(
-        $databaseConnection,
+    $user = $userRepository->findById(
         $userId
     );
 
@@ -483,7 +478,8 @@ function deleteAdminUserAction(
 
     if (
         $user['role'] === 'ADMIN'
-        && countAdminUsers($databaseConnection) <= 1
+        && $countAdmins =
+        $userRepository->countAdmins() <= 1
     ) {
         header(
             'Location: index.php'
@@ -506,8 +502,7 @@ function deleteAdminUserAction(
         exit;
     }
 
-    deleteUserById(
-        $databaseConnection,
+    $userRepository->deleteById(
         $userId
     );
 

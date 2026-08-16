@@ -3,6 +3,7 @@
 declare(strict_types=1);
 use App\Repository\AgencyRepository;
 use App\Repository\TripRepository;
+use App\Repository\UserRepository;
 use App\Validation\TripValidator;
 
 
@@ -12,20 +13,35 @@ ini_set('display_errors', '1');
 session_start();
 
 require_once __DIR__ . '/vendor/autoload.php';
-
-$databaseConnection = getDatabaseConnection();
+$databaseConnection =
+    getDatabaseConnection();
 
 $agencyRepository =
-    new AgencyRepository($databaseConnection);
+    new AgencyRepository(
+        $databaseConnection
+    );
 
-$tripRepository = new TripRepository($databaseConnection);
-$tripValidator = new TripValidator();
+$tripRepository =
+    new TripRepository(
+        $databaseConnection
+    );
+
+$userRepository =
+    new UserRepository(
+        $databaseConnection
+    );
+
+$tripValidator =
+    new TripValidator();
 $route = trim($_GET['route'] ?? '', '/');
 
 match ($route) {
     '', 'home' => showHomePage($tripRepository),
 
-    'login' => showLoginPage($databaseConnection),
+    'login' =>
+    showLoginPage(
+        $userRepository
+    ),
 
     'logout' => logoutUser(),
 
@@ -53,21 +69,22 @@ match ($route) {
         $tripRepository
     ),
 
-    'admin/users' => showAdminUsersPage(
-        $databaseConnection
+    'admin/users' =>
+    showAdminUsersPage(
+        $userRepository
     ),
 
-    'admin/users/create' => showAdminCreateUserPage(
-        $databaseConnection
+    'admin/users/create' =>
+    showAdminCreateUserPage(
+        $userRepository
     ),
-
     'admin/users/edit' => showAdminEditUserPage(
-        $databaseConnection
+        $userRepository
     ),
 
     'admin/users/delete' =>
     deleteAdminUserAction(
-        $databaseConnection,
+        $userRepository,
         $tripRepository
     ),
 
