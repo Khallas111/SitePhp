@@ -17,6 +17,11 @@
         "src/Controller/ErrorController.php"
     ]
 },
+"autoload-dev": {
+    "psr-4": {
+        "Tests\\": "tests/"
+    }
+},
     "authors": [
         {
             "name": "Khallas111",
@@ -25,7 +30,7 @@
     ],
    "scripts": {
     "analyse": "phpstan analyse",
-    "test": "phpunit tests",
+    "test": "phpunit",
     "check": [
         "@analyse",
         "@test"

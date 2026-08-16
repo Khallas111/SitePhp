@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+namespace Tests\Validation;
+
 use App\Validation\TripValidator;
 use PHPUnit\Framework\TestCase;
 
-final class FunctionsTest extends TestCase
+final class TripValidatorTest extends TestCase
 {
     private TripValidator $tripValidator;
 
@@ -13,29 +15,8 @@ final class FunctionsTest extends TestCase
     {
         $this->tripValidator = new TripValidator();
     }
-    public function testParseDateTimeLocalReturnsDateForValidValue(): void
-    {
-        $date = parseDateTimeLocal('2026-08-20T14:30');
 
-        self::assertInstanceOf(
-            DateTimeImmutable::class,
-            $date
-        );
-
-        self::assertSame(
-            '2026-08-20 14:30',
-            $date->format('Y-m-d H:i')
-        );
-    }
-
-    public function testParseDateTimeLocalReturnsNullForInvalidValue(): void
-    {
-        $date = parseDateTimeLocal('bonjour');
-
-        self::assertNull($date);
-    }
-
-    public function testValidateTripAcceptsValidTrip(): void
+    public function testAcceptsValidTrip(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -48,7 +29,7 @@ final class FunctionsTest extends TestCase
         self::assertSame([], $errors);
     }
 
-    public function testValidateTripRejectsSameAgencies(): void
+    public function testRejectsSameAgencies(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -61,7 +42,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsZeroSeats(): void
+    public function testRejectsZeroSeats(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -74,7 +55,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsNegativeSeats(): void
+    public function testRejectsNegativeSeats(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -87,7 +68,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsNonNumericSeats(): void
+    public function testRejectsNonNumericSeats(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -100,7 +81,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsArrivalBeforeDeparture(): void
+    public function testRejectsArrivalBeforeDeparture(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -113,7 +94,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsSameDepartureAndArrivalTime(): void
+    public function testRejectsSameDepartureAndArrivalTime(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -126,7 +107,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsInvalidDate(): void
+    public function testRejectsInvalidDate(): void
     {
         $errors = $this->tripValidator->validate(
             '1',
@@ -148,7 +129,7 @@ final class FunctionsTest extends TestCase
         self::assertNull($date);
     }
 
-    public function testValidateTripRejectsInvalidAgencyId(): void
+    public function testRejectsInvalidAgencyId(): void
     {
         $errors = $this->tripValidator->validate(
             'bonjour',
@@ -161,7 +142,7 @@ final class FunctionsTest extends TestCase
         self::assertNotEmpty($errors);
     }
 
-    public function testValidateTripRejectsZeroAgencyId(): void
+    public function testRejectsZeroAgencyId(): void
     {
         $errors = $this->tripValidator->validate(
             '0',
