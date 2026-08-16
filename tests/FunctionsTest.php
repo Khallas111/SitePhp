@@ -2,17 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Validation\TripValidator;
 use PHPUnit\Framework\TestCase;
 
 final class FunctionsTest extends TestCase
 {
-    private TripValidator $tripValidator;
-
-    protected function setUp(): void
-    {
-        $this->tripValidator = new TripValidator();
-    }
     public function testParseDateTimeLocalReturnsDateForValidValue(): void
     {
         $date = parseDateTimeLocal('2026-08-20T14:30');
@@ -35,109 +28,6 @@ final class FunctionsTest extends TestCase
         self::assertNull($date);
     }
 
-    public function testValidateTripAcceptsValidTrip(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertSame([], $errors);
-    }
-
-    public function testValidateTripRejectsSameAgencies(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '1',
-            '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsZeroSeats(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '0',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsNegativeSeats(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '-5',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsNonNumericSeats(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            'quatre',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsArrivalBeforeDeparture(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '4',
-            '2026-08-20T10:30',
-            '2026-08-20T08:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsSameDepartureAndArrivalTime(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '4',
-            '2026-08-20T10:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsInvalidDate(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '1',
-            '2',
-            '4',
-            'bonjour',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
 
     public function testParseDateTimeLocalRejectsImpossibleDate(): void
     {
@@ -148,29 +38,4 @@ final class FunctionsTest extends TestCase
         self::assertNull($date);
     }
 
-    public function testValidateTripRejectsInvalidAgencyId(): void
-    {
-        $errors = $this->tripValidator->validate(
-            'bonjour',
-            '2',
-            '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
-
-    public function testValidateTripRejectsZeroAgencyId(): void
-    {
-        $errors = $this->tripValidator->validate(
-            '0',
-            '2',
-            '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
-        );
-
-        self::assertNotEmpty($errors);
-    }
 }

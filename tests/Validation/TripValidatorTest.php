@@ -119,16 +119,6 @@ final class TripValidatorTest extends TestCase
 
         self::assertNotEmpty($errors);
     }
-
-    public function testParseDateTimeLocalRejectsImpossibleDate(): void
-    {
-        $date = parseDateTimeLocal(
-            '2026-02-31T10:30'
-        );
-
-        self::assertNull($date);
-    }
-
     public function testRejectsInvalidAgencyId(): void
     {
         $errors = $this->tripValidator->validate(

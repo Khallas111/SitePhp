@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 use App\Validation\TripValidator;
+use App\Repository\TripRepository;
 use App\Repository\AgencyRepository;
 
 /**
  * Prépare, traite et affiche le formulaire de création d’un trajet.
  */
 function showCreateTripPage(
-    PDO $databaseConnection,
     AgencyRepository $agencyRepository,
+    TripRepository $tripRepository,
     TripValidator $tripValidator
 ): void {
 
@@ -130,8 +131,7 @@ function showCreateTripPage(
         ) {
             $authorId = $currentUser['id_user'];
 
-            createTrip(
-                $databaseConnection,
+            $tripRepository->create(
                 $departureDate,
                 $arrivalDate,
                 $totalSeats,
@@ -154,7 +154,7 @@ function showCreateTripPage(
  * Affiche les informations détaillées d’un trajet.
  */
 function showTripDetailsPage(
-    PDO $databaseConnection
+    TripRepository $tripRepository
 ): void {
     $currentUser = requireLogin();
 
@@ -175,10 +175,10 @@ function showTripDetailsPage(
 
     $tripId = (int) $tripIdInput;
 
-    $trip = findTripDetailsById(
-        $databaseConnection,
-        $tripId
-    );
+    $trip =
+        $tripRepository->findDetailsById(
+            $tripId
+        );
 
     if ($trip === null) {
         showNotFoundPage();
@@ -200,8 +200,8 @@ function showTripDetailsPage(
  * Affiche et traite le formulaire de modification d’un trajet.
  */
 function showEditTripPage(
-    PDO $databaseConnection,
     AgencyRepository $agencyRepository,
+    TripRepository $tripRepository,
     TripValidator $tripValidator
 ): void {
     $currentUser = requireLogin();
@@ -223,10 +223,7 @@ function showEditTripPage(
 
     $tripId = (int) $tripIdInput;
 
-    $trip = findTripDetailsById(
-        $databaseConnection,
-        $tripId
-    );
+    $trip = $tripRepository->findDetailsById($tripId);
 
     if ($trip === null) {
         showNotFoundPage();
@@ -364,8 +361,7 @@ function showEditTripPage(
         }
 
         if ($errors === []) {
-            updateTrip(
-                $databaseConnection,
+            $tripRepository->update(
                 $tripId,
                 $departureDate,
                 $arrivalDate,
@@ -392,7 +388,7 @@ function showEditTripPage(
  * Supprime un trajet lorsque l’utilisateur possède les droits nécessaires.
  */
 function deleteTripAction(
-    PDO $databaseConnection
+    TripRepository $tripRepository
 ): void {
     $currentUser = requireLogin();
 
@@ -421,11 +417,10 @@ function deleteTripAction(
 
     $tripId = (int) $tripIdInput;
 
-    $trip = findTripDetailsById(
-        $databaseConnection,
-        $tripId
-    );
-
+    $trip =
+        $tripRepository->findDetailsById(
+            $tripId
+        );
     if ($trip === null) {
         showNotFoundPage();
         return;
@@ -436,8 +431,7 @@ function deleteTripAction(
         return;
     }
 
-    deleteTripById(
-        $databaseConnection,
+    $tripRepository->deleteById(
         $tripId
     );
 
