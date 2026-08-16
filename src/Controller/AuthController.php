@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Repository\UserRepository;
 /**
  * Affiche et traite le formulaire de connexion.
  */
-function showLoginPage(PDO $databaseConnection): void
-{
+function showLoginPage(
+    UserRepository $userRepository
+): void {
     $applicationName = 'Klaxon';
     $pageTitle = 'Connexion';
 
@@ -50,10 +52,10 @@ function showLoginPage(PDO $databaseConnection): void
         }
 
         if ($errors === []) {
-            $user = findUserByEmail(
-                $databaseConnection,
-                $emailInput
-            );
+            $user =
+                $userRepository->findByEmail(
+                    $emailInput
+                );
 
             if (
                 $user === null

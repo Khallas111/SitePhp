@@ -8,7 +8,6 @@
     "files": [
         "src/functions.php",
         "config/database.php",
-        "src/Repository/UserRepository.php",
         "src/Controller/HomeController.php",
         "src/Controller/TripController.php",
         "src/Controller/AuthController.php",
