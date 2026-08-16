@@ -122,11 +122,8 @@ function showCreateTripPage(PDO $databaseConnection): void
 
         if (
             $errors === []
-            && $departureAgencyId !== null
-            && $arrivalAgencyId !== null
             && $departureDate !== null
             && $arrivalDate !== null
-            && $totalSeats !== null
         ) {
             $authorId = $currentUser['id_user'];
 
