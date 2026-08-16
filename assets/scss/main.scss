@@ -13,3 +13,10 @@ main {
 .navbar-brand {
     letter-spacing: 0.05rem;
 }
+
+.form-control,
+.form-select,
+.btn,
+.card {
+    border-radius: 0.5rem;
+}

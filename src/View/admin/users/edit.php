@@ -53,45 +53,47 @@ require __DIR__ . '/../../partials/header.php';
     <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
     <div>
-        <label for="firstName">
+        <label for="firstName" class="form-label">
             Prénom
         </label>
 
-        <input type="text" id="firstName" name="firstName" value="<?= escape($firstNameInput) ?>"
+        <input type="text" id="firstName" name="firstName" class="form-control" value="<?= escape($firstNameInput) ?>"
             autocomplete="given-name" required>
     </div>
 
     <div>
-        <label for="lastName">
+        <label for="lastName" class="form-label">
             Nom
         </label>
 
-        <input type="text" id="lastName" name="lastName" value="<?= escape($lastNameInput) ?>"
+        <input type="text" id="lastName" name="lastName" class="form-control" value="<?= escape($lastNameInput) ?>"
             autocomplete="family-name" required>
     </div>
 
     <div>
-        <label for="email">
+        <label for="email" class="form-label">
             Adresse email
         </label>
 
-        <input type="email" id="email" name="email" value="<?= escape($emailInput) ?>" autocomplete="email" required>
+        <input type="email" id="email" name="email" class="form-control" value="<?= escape($emailInput) ?>"
+            autocomplete="email" required>
     </div>
 
     <div>
-        <label for="phone">
+        <label for="phone" class="form-label">
             Téléphone
         </label>
 
-        <input type="tel" id="phone" name="phone" value="<?= escape($phoneInput) ?>" autocomplete="tel" required>
+        <input type="tel" id="phone" name="phone" class="form-control" value="<?= escape($phoneInput) ?>"
+            autocomplete="tel" required>
     </div>
 
     <div>
-        <label for="role">
+        <label for="role" class="form-label">
             Rôle
         </label>
 
-        <select id="role" name="role" required>
+        <select id="role" name="role" class="form-select" required>
             <option value="USER" <?php if ($roleInput === 'USER'): ?> selected <?php endif; ?>>
                 Utilisateur
             </option>
@@ -102,9 +104,10 @@ require __DIR__ . '/../../partials/header.php';
         </select>
     </div>
 
-    <fieldset>
-        <legend>Changer le mot de passe</legend>
-
+    <fieldset class="border rounded p-3 mt-4">
+        <legend class="float-none w-auto px-2 h6">
+            Changer le mot de passe
+        </legend>
         <p>
             Laissez les deux champs vides pour conserver
             le mot de passe actuel.
@@ -115,26 +118,27 @@ require __DIR__ . '/../../partials/header.php';
                 Nouveau mot de passe
             </label>
 
-            <input type="password" id="password" name="password" minlength="8" autocomplete="new-password">
+            <input type="password" id="password" class="form-control" name="password" minlength="8"
+                autocomplete="new-password">
         </div>
 
-        <div>
-            <label for="passwordConfirmation">
+        <div class="mb-3">
+            <label for="passwordConfirmation" class="form-label">
                 Confirmer le nouveau mot de passe
             </label>
 
-            <input type="password" id="passwordConfirmation" name="passwordConfirmation" minlength="8"
-                autocomplete="new-password">
+            <input type="password" id="passwordConfirmation" name="passwordConfirmation" class="form-control"
+                minlength="8" autocomplete="new-password">
         </div>
     </fieldset>
 
-    <button type="submit">
+    <button type="submit" class="btn btn-warning">
         Enregistrer les modifications
     </button>
 </form>
 
 <p>
-    <a href="index.php?route=admin/users">
+    <a href="index.php?route=admin/users" class="btn btn-outline-secondary">
         Retour à la liste des utilisateurs
     </a>
 </p>

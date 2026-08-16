@@ -30,7 +30,7 @@ require __DIR__ . '/../../partials/header.php';
 <?php endif; ?>
 
 <?php if ($errors !== []): ?>
-    <div>
+    <div class="alert alert-danger" role="alert">
         <h2>
             Le formulaire contient des erreurs
         </h2>
@@ -49,21 +49,21 @@ require __DIR__ . '/../../partials/header.php';
     <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
     <div>
-        <label for="city">
+        <label for="city" class="form-label">
             Ville
         </label>
 
-        <input type="text" id="city" name="city" value="<?= escape($cityInput) ?>" autocomplete="address-level2"
-            required>
+        <input type="text" id="city" name="city" class="form-control" value="<?= escape($cityInput) ?>"
+            autocomplete="address-level2" required>
     </div>
 
-    <button type="submit">
-        Ajouter l’agence
+    <button type="submit" class="btn btn-warning">
+        Enregistrer les modifications
     </button>
 </form>
 
 <p>
-    <a href="index.php?route=admin/agencies">
+    <a href="index.php?route=admin/agencies" class="btn btn-outline-secondary">
         Retour à la liste des agences
     </a>
 </p>
