@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 use App\Validation\TripValidator;
+use App\Repository\AgencyRepository;
 
 /**
  * Prépare, traite et affiche le formulaire de création d’un trajet.
  */
 function showCreateTripPage(
     PDO $databaseConnection,
+    AgencyRepository $agencyRepository,
     TripValidator $tripValidator
 ): void {
 
@@ -32,7 +34,7 @@ function showCreateTripPage(
     $arrivalDate = null;
     $totalSeats = null;
 
-    $agencies = findAllAgencies($databaseConnection);
+    $agencies = $agencyRepository->findAll();
 
     if (
         $_SERVER['REQUEST_METHOD'] === 'GET'
@@ -82,8 +84,7 @@ function showCreateTripPage(
             $arrivalAgencyId = (int) $arrivalAgencyIdInput;
 
             if (
-                !agencyExists(
-                    $databaseConnection,
+                !$agencyRepository->exists(
                     $departureAgencyId
                 )
             ) {
@@ -92,8 +93,7 @@ function showCreateTripPage(
             }
 
             if (
-                !agencyExists(
-                    $databaseConnection,
+                !$agencyRepository->exists(
                     $arrivalAgencyId
                 )
             ) {
@@ -201,6 +201,7 @@ function showTripDetailsPage(
  */
 function showEditTripPage(
     PDO $databaseConnection,
+    AgencyRepository $agencyRepository,
     TripValidator $tripValidator
 ): void {
     $currentUser = requireLogin();
@@ -237,7 +238,7 @@ function showEditTripPage(
         return;
     }
 
-    $agencies = findAllAgencies($databaseConnection);
+    $agencies = $agencyRepository->findAll();
 
     $departureAgencyIdInput =
         (string) $trip['departure_agency_id'];
@@ -295,8 +296,6 @@ function showEditTripPage(
         }
 
         if ($errors === []) {
-            $tripValidator = new TripValidator();
-
             $errors = $tripValidator->validate(
                 $departureAgencyIdInput,
                 $arrivalAgencyIdInput,
@@ -314,20 +313,14 @@ function showEditTripPage(
                 (int) $arrivalAgencyIdInput;
 
             if (
-                !agencyExists(
-                    $databaseConnection,
-                    $departureAgencyId
-                )
+                !$agencyRepository->exists($departureAgencyId)
             ) {
                 $errors[] =
                     'L’agence de départ sélectionnée n’existe pas.';
             }
 
             if (
-                !agencyExists(
-                    $databaseConnection,
-                    $arrivalAgencyId
-                )
+                !$agencyRepository->exists($arrivalAgencyId)
             ) {
                 $errors[] =
                     'L’agence d’arrivée sélectionnée n’existe pas.';

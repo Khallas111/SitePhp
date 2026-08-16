@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Repository\AgencyRepository;
 
 /**
  * Affiche la liste des utilisateurs aux administrateurs.
@@ -521,7 +522,8 @@ function deleteAdminUserAction(
  * Affiche la liste des agences.
  */
 function showAdminAgenciesPage(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -546,10 +548,7 @@ function showAdminAgenciesPage(
             . 'trajets et ne peut pas être supprimée.';
     }
 
-    $agencies = findAllAgencies(
-        $databaseConnection
-    );
-
+    $agencies = $agencyRepository->findAll();
     require __DIR__
         . '/../View/admin/agencies/index.php';
 }
@@ -558,7 +557,8 @@ function showAdminAgenciesPage(
  * Affiche et traite le formulaire de création d’une agence.
  */
 function showAdminCreateAgencyPage(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -603,20 +603,14 @@ function showAdminCreateAgencyPage(
 
         if (
             $errors === []
-            && agencyCityExists(
-                $databaseConnection,
-                $cityInput
-            )
+            && $agencyRepository->cityExists($cityInput)
         ) {
             $errors[] =
                 'Une agence existe déjà pour cette ville.';
         }
 
         if ($errors === []) {
-            createAgency(
-                $databaseConnection,
-                $cityInput
-            );
+            $agencyRepository->create($cityInput);
 
             header(
                 'Location: index.php'
@@ -635,7 +629,8 @@ function showAdminCreateAgencyPage(
  * Affiche et traite le formulaire de modification d’une agence.
  */
 function showAdminEditAgencyPage(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();
 
@@ -656,10 +651,7 @@ function showAdminEditAgencyPage(
 
     $agencyId = (int) $agencyIdInput;
 
-    $agency = findAgencyById(
-        $databaseConnection,
-        $agencyId
-    );
+    $agency = $agencyRepository->findById($agencyId);
 
     if ($agency === null) {
         showNotFoundPage();
@@ -703,8 +695,7 @@ function showAdminEditAgencyPage(
 
         if (
             $errors === []
-            && agencyCityExistsForAnotherAgency(
-                $databaseConnection,
+            && $agencyRepository->cityExistsForAnotherAgency(
                 $cityInput,
                 $agencyId
             )
@@ -714,8 +705,7 @@ function showAdminEditAgencyPage(
         }
 
         if ($errors === []) {
-            updateAgency(
-                $databaseConnection,
+            $agencyRepository->update(
                 $agencyId,
                 $cityInput
             );
@@ -739,7 +729,8 @@ function showAdminEditAgencyPage(
  * par aucun trajet.
  */
 function deleteAdminAgencyAction(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    AgencyRepository $agencyRepository
 ): void {
     requireAdmin();
 
@@ -772,10 +763,7 @@ function deleteAdminAgencyAction(
 
     $agencyId = (int) $agencyIdInput;
 
-    $agency = findAgencyById(
-        $databaseConnection,
-        $agencyId
-    );
+    $agency = $agencyRepository->findById($agencyId);
 
     if ($agency === null) {
         showNotFoundPage();
@@ -796,10 +784,7 @@ function deleteAdminAgencyAction(
         exit;
     }
 
-    deleteAgencyById(
-        $databaseConnection,
-        $agencyId
-    );
+    $agencyRepository->deleteById($agencyId);
 
     header(
         'Location: index.php'
