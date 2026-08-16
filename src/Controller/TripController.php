@@ -6,8 +6,10 @@ use App\Validation\TripValidator;
 /**
  * Prépare, traite et affiche le formulaire de création d’un trajet.
  */
-function showCreateTripPage(PDO $databaseConnection): void
-{
+function showCreateTripPage(
+    PDO $databaseConnection,
+    TripValidator $tripValidator
+): void {
 
     $applicationName = 'Klaxon';
     $pageTitle = 'Proposer un trajet';
@@ -66,8 +68,6 @@ function showCreateTripPage(PDO $databaseConnection): void
         }
 
         if ($errors === []) {
-            $tripValidator = new TripValidator();
-
             $errors = $tripValidator->validate(
                 $departureAgencyIdInput,
                 $arrivalAgencyIdInput,
@@ -200,7 +200,8 @@ function showTripDetailsPage(
  * Affiche et traite le formulaire de modification d’un trajet.
  */
 function showEditTripPage(
-    PDO $databaseConnection
+    PDO $databaseConnection,
+    TripValidator $tripValidator
 ): void {
     $currentUser = requireLogin();
 

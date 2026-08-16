@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+use App\Validation\TripValidator;
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -9,8 +10,9 @@ session_start();
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$databaseConnection = getDatabaseConnection();
 
+$databaseConnection = getDatabaseConnection();
+$tripValidator = new TripValidator();
 $route = trim($_GET['route'] ?? '', '/');
 
 match ($route) {
@@ -21,15 +23,18 @@ match ($route) {
     'logout' => logoutUser(),
 
     'trips/create' => showCreateTripPage(
-        $databaseConnection
+        $databaseConnection,
+        $tripValidator
     ),
 
     'trips/show' => showTripDetailsPage(
         $databaseConnection
     ),
 
-    'trips/edit' => showEditTripPage(
-        $databaseConnection
+    'trips/edit' =>
+    showEditTripPage(
+        $databaseConnection,
+        $tripValidator
     ),
 
     'trips/delete' => deleteTripAction(
