@@ -141,6 +141,26 @@ function createTrip(
  *     author_phone: string
  * }|null
  */
+/**
+ * Recherche les informations détaillées d’un trajet.
+ *
+ * @return array{
+ *     id_trip: int,
+ *     departure_agency_id: int,
+ *     departure_city: string,
+ *     departure_at: string,
+ *     arrival_agency_id: int,
+ *     arrival_city: string,
+ *     arrival_at: string,
+ *     total_seats: int,
+ *     available_seats: int,
+ *     author_id: int,
+ *     author_first_name: string,
+ *     author_last_name: string,
+ *     author_email: string,
+ *     author_phone: string
+ * }|null
+ */
 function findTripDetailsById(
     PDO $databaseConnection,
     int $tripId

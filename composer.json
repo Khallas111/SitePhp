@@ -1,0 +1,21 @@
+{
+    "name": "devoir/klaxon",
+    "description": "Application intranet de covoiturage inter-sites",
+    "autoload": {
+        "psr-4": {
+            "Devoir\\Klaxon\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Khallas111",
+            "email": "salimkhorchi11@gmail.com"
+        }
+    ],
+    "scripts": {
+        "analyse": "phpstan analyse"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.2"
+    }
+}
