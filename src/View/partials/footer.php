@@ -8,8 +8,8 @@
 
 </main>
 
-<footer class="border-top py-4 mt-5">
-    <div class="container text-center text-body-secondary">
+<footer class="site-footer border-top py-4 mt-5">
+    <div class="container text-center">
         <small>
             &copy;
             <?= escape((string) date('Y')) ?>

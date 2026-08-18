@@ -340,6 +340,47 @@ final class TripRepositoryTest extends TestCase
         );
     }
 
+    public function testFindAllTripsIncludesPastAndFullTrips(): void
+    {
+        $departureAgencyId =
+            $this->createAgency('Perpignan');
+
+        $arrivalAgencyId =
+            $this->createAgency('Montpellier');
+
+        $authorId = $this->createUser();
+
+        $futureDeparture =
+            new DateTimeImmutable('+3 days');
+
+        $futureTripId = $this->createTripFixture(
+            $authorId,
+            $departureAgencyId,
+            $arrivalAgencyId,
+            $futureDeparture,
+            $futureDeparture->modify('+2 hours'),
+            4,
+            0
+        );
+
+        $pastDeparture =
+            new DateTimeImmutable('-3 days');
+
+        $pastTripId = $this->createTripFixture(
+            $authorId,
+            $departureAgencyId,
+            $arrivalAgencyId,
+            $pastDeparture,
+            $pastDeparture->modify('+2 hours')
+        );
+
+        $trips = $this->tripRepository->findAll();
+
+        self::assertCount(2, $trips);
+        self::assertSame($pastTripId, $trips[0]['id_trip']);
+        self::assertSame($futureTripId, $trips[1]['id_trip']);
+    }
+
     public function testUpdateTrip(): void
     {
         $perpignanId =

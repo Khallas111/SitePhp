@@ -14,511 +14,47 @@ function showAdminUsersPage(
     $currentUser = requireAdmin();
 
     $applicationName = 'Klaxon';
-    $pageTitle = 'Gestion des utilisateurs';
+    $pageTitle = 'Utilisateurs';
+
     $csrfToken = getCsrfToken();
 
-    $successMessage = '';
-    $errorMessage = '';
-
-    if (
-        $_SERVER['REQUEST_METHOD'] === 'GET'
-        && ($_GET['deleted'] ?? '') === '1'
-    ) {
-        $successMessage =
-            'L’utilisateur a été supprimé avec succès.';
-    }
-
-    $errorCode = $_GET['error'] ?? '';
-
-    if ($errorCode === 'self_delete') {
-        $errorMessage =
-            'Vous ne pouvez pas supprimer votre propre compte.';
-    } elseif ($errorCode === 'last_admin') {
-        $errorMessage =
-            'Le dernier administrateur ne peut pas être supprimé.';
-    } elseif ($errorCode === 'has_trips') {
-        $errorMessage =
-            'Cet utilisateur possède encore des trajets. '
-            . 'Supprimez-les avant de supprimer son compte.';
-    }
-
-    $users =
-        $userRepository->findAll();
+    $users = $userRepository->findAll();
 
     require __DIR__
         . '/../View/admin/users/index.php';
 }
 
 /**
- * Affiche et traite le formulaire de création d’un utilisateur.
+ * Affiche tous les trajets aux administrateurs.
  */
-function showAdminCreateUserPage(
-    UserRepository $userRepository
-): void {
-    $currentUser = requireAdmin();
-
-    $applicationName = 'Klaxon';
-    $pageTitle = 'Créer un utilisateur';
-    $csrfToken = getCsrfToken();
-
-    $firstNameInput = '';
-    $lastNameInput = '';
-    $emailInput = '';
-    $phoneInput = '';
-    $roleInput = 'USER';
-
-    $errors = [];
-    $successMessage = '';
-
-    if (
-        $_SERVER['REQUEST_METHOD'] === 'GET'
-        && ($_GET['created'] ?? '') === '1'
-    ) {
-        $successMessage =
-            'L’utilisateur a été créé avec succès.';
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $firstNameInput = trim(
-            $_POST['firstName'] ?? ''
-        );
-
-        $lastNameInput = trim(
-            $_POST['lastName'] ?? ''
-        );
-
-        $emailInput = strtolower(
-            trim($_POST['email'] ?? '')
-        );
-
-        $phoneInput = trim(
-            $_POST['phone'] ?? ''
-        );
-
-        $roleInput = $_POST['role'] ?? '';
-
-        $passwordInput =
-            $_POST['password'] ?? '';
-
-        $passwordConfirmationInput =
-            $_POST['passwordConfirmation'] ?? '';
-
-        if (
-            !isCsrfTokenValid(
-                $_POST['csrf_token'] ?? null
-            )
-        ) {
-            $errors[] =
-                'Le formulaire a expiré. Veuillez réessayer.';
-        }
-
-        if ($errors === []) {
-            if ($firstNameInput === '') {
-                $errors[] = 'Le prénom est obligatoire.';
-            }
-
-            if ($lastNameInput === '') {
-                $errors[] = 'Le nom est obligatoire.';
-            }
-
-            if ($emailInput === '') {
-                $errors[] =
-                    'L’adresse email est obligatoire.';
-            } elseif (
-                filter_var(
-                    $emailInput,
-                    FILTER_VALIDATE_EMAIL
-                ) === false
-            ) {
-                $errors[] =
-                    'L’adresse email est invalide.';
-            }
-
-            if ($phoneInput === '') {
-                $errors[] =
-                    'Le numéro de téléphone est obligatoire.';
-            }
-
-            if (
-                !in_array(
-                    $roleInput,
-                    ['USER', 'ADMIN'],
-                    true
-                )
-            ) {
-                $errors[] =
-                    'Le rôle sélectionné est invalide.';
-            }
-
-            if ($passwordInput === '') {
-                $errors[] =
-                    'Le mot de passe est obligatoire.';
-            } elseif (strlen($passwordInput) < 8) {
-                $errors[] =
-                    'Le mot de passe doit contenir '
-                    . 'au moins 8 caractères.';
-            }
-
-            if (
-                $passwordInput
-                !== $passwordConfirmationInput
-            ) {
-                $errors[] =
-                    'La confirmation du mot de passe '
-                    . 'ne correspond pas.';
-            }
-        }
-
-        if (
-            $errors === []
-            && $userRepository->emailExists(
-                $emailInput
-            )
-        ) {
-            $errors[] =
-                'Cette adresse email est déjà utilisée.';
-        }
-
-        if ($errors === []) {
-            $passwordHash = password_hash(
-                $passwordInput,
-                PASSWORD_DEFAULT
-            );
-
-            $userRepository->create(
-                $firstNameInput,
-                $lastNameInput,
-                $emailInput,
-                $passwordHash,
-                $phoneInput,
-                $roleInput,
-            );
-
-            header(
-                'Location: index.php'
-                . '?route=admin/users/create'
-                . '&created=1'
-            );
-            exit;
-        }
-    }
-
-    require __DIR__
-        . '/../View/admin/users/create.php';
-}
-
-/**
- * Affiche et traite le formulaire de modification d’un utilisateur.
- */
-function showAdminEditUserPage(
-    UserRepository $userRepository
-): void {
-    $currentUser = requireAdmin();
-
-    $applicationName = 'Klaxon';
-    $pageTitle = 'Modifier un utilisateur';
-    $csrfToken = getCsrfToken();
-
-    $userIdInput = $_GET['id'] ?? null;
-
-    if (
-        !is_string($userIdInput)
-        || !ctype_digit($userIdInput)
-        || (int) $userIdInput < 1
-    ) {
-        showNotFoundPage();
-        return;
-    }
-
-    $userId = (int) $userIdInput;
-
-    $user = $userRepository->findById($userId);
-
-    if ($user === null) {
-        showNotFoundPage();
-        return;
-    }
-
-    $firstNameInput = $user['first_name'];
-    $lastNameInput = $user['last_name'];
-    $emailInput = $user['email'];
-    $phoneInput = $user['phone'];
-    $roleInput = $user['role'];
-
-    $errors = [];
-    $successMessage = '';
-
-    if (
-        $_SERVER['REQUEST_METHOD'] === 'GET'
-        && ($_GET['updated'] ?? '') === '1'
-    ) {
-        $successMessage =
-            'L’utilisateur a été modifié avec succès.';
-    }
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $firstNameInput = trim(
-            $_POST['firstName'] ?? ''
-        );
-
-        $lastNameInput = trim(
-            $_POST['lastName'] ?? ''
-        );
-
-        $emailInput = strtolower(
-            trim($_POST['email'] ?? '')
-        );
-
-        $phoneInput = trim(
-            $_POST['phone'] ?? ''
-        );
-
-        $roleInput = $_POST['role'] ?? '';
-
-        $passwordInput =
-            $_POST['password'] ?? '';
-
-        $passwordConfirmationInput =
-            $_POST['passwordConfirmation'] ?? '';
-
-        if (
-            !isCsrfTokenValid(
-                $_POST['csrf_token'] ?? null
-            )
-        ) {
-            $errors[] =
-                'Le formulaire a expiré. Veuillez réessayer.';
-        }
-
-        if ($errors === []) {
-            if ($firstNameInput === '') {
-                $errors[] = 'Le prénom est obligatoire.';
-            }
-
-            if ($lastNameInput === '') {
-                $errors[] = 'Le nom est obligatoire.';
-            }
-
-            if ($emailInput === '') {
-                $errors[] =
-                    'L’adresse email est obligatoire.';
-            } elseif (
-                filter_var(
-                    $emailInput,
-                    FILTER_VALIDATE_EMAIL
-                ) === false
-            ) {
-                $errors[] =
-                    'L’adresse email est invalide.';
-            }
-
-            if ($phoneInput === '') {
-                $errors[] =
-                    'Le numéro de téléphone est obligatoire.';
-            }
-
-            if (
-                !in_array(
-                    $roleInput,
-                    ['USER', 'ADMIN'],
-                    true
-                )
-            ) {
-                $errors[] =
-                    'Le rôle sélectionné est invalide.';
-            }
-        }
-
-        if (
-            $errors === []
-            && $userId === $currentUser['id_user']
-            && $roleInput !== 'ADMIN'
-        ) {
-            $errors[] =
-                'Vous ne pouvez pas retirer votre propre '
-                . 'rôle administrateur.';
-        }
-
-        if (
-            $errors === []
-            && $userRepository
-                ->emailExistsForAnotherUser(
-                    $emailInput,
-                    $userId
-                )
-        ) {
-            $errors[] =
-                'Cette adresse email est déjà utilisée.';
-        }
-
-        $passwordHash = null;
-
-        if (
-            $passwordInput !== ''
-            || $passwordConfirmationInput !== ''
-        ) {
-            if ($passwordInput === '') {
-                $errors[] =
-                    'Le nouveau mot de passe est obligatoire.';
-            } elseif (strlen($passwordInput) < 8) {
-                $errors[] =
-                    'Le nouveau mot de passe doit contenir '
-                    . 'au moins 8 caractères.';
-            }
-
-            if (
-                $passwordInput
-                !== $passwordConfirmationInput
-            ) {
-                $errors[] =
-                    'La confirmation du mot de passe '
-                    . 'ne correspond pas.';
-            }
-
-            if ($errors === []) {
-                $passwordHash = password_hash(
-                    $passwordInput,
-                    PASSWORD_DEFAULT
-                );
-            }
-        }
-
-        if ($errors === []) {
-            $userRepository->update(
-                $userId,
-                $firstNameInput,
-                $lastNameInput,
-                $emailInput,
-                $phoneInput,
-                $roleInput,
-                $passwordHash
-            );
-
-            if ($userId === $currentUser['id_user']) {
-                $_SESSION['user'] = [
-                    'id_user' => $userId,
-                    'first_name' => $firstNameInput,
-                    'last_name' => $lastNameInput,
-                    'email' => $emailInput,
-                    'phone' => $phoneInput,
-                    'role' => $roleInput,
-                ];
-            }
-
-            header(
-                'Location: index.php'
-                . '?route=admin/users/edit'
-                . '&id=' . $userId
-                . '&updated=1'
-            );
-            exit;
-        }
-    }
-
-    require __DIR__
-        . '/../View/admin/users/edit.php';
-}
-
-/**
- * Supprime un utilisateur lorsque toutes les règles
- * de sécurité sont respectées.
- */
-function deleteAdminUserAction(
-    UserRepository $userRepository,
+function showAdminTripsPage(
     TripRepository $tripRepository
 ): void {
     $currentUser = requireAdmin();
 
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-
-        echo 'Méthode non autorisée.';
-        return;
-    }
+    $applicationName = 'Klaxon';
+    $pageTitle = 'Gestion des trajets';
+    $csrfToken = getCsrfToken();
+    $successMessage = '';
 
     if (
-        !isCsrfTokenValid(
-            $_POST['csrf_token'] ?? null
-        )
+        $_SERVER['REQUEST_METHOD'] === 'GET'
+        && ($_GET['deleted'] ?? '') === '1'
     ) {
-        showForbiddenPage();
-        return;
+        $successMessage =
+            'Le trajet a été supprimé avec succès.';
     }
 
-    $userIdInput = $_POST['user_id'] ?? null;
+    $trips = $tripRepository->findAll();
 
-    if (
-        !is_string($userIdInput)
-        || !ctype_digit($userIdInput)
-        || (int) $userIdInput < 1
-    ) {
-        showNotFoundPage();
-        return;
-    }
-
-    $userId = (int) $userIdInput;
-
-    $user = $userRepository->findById(
-        $userId
-    );
-
-    if ($user === null) {
-        showNotFoundPage();
-        return;
-    }
-
-    if ($userId === $currentUser['id_user']) {
-        header(
-            'Location: index.php'
-            . '?route=admin/users'
-            . '&error=self_delete'
-        );
-        exit;
-    }
-
-    if (
-        $user['role'] === 'ADMIN'
-        && $countAdmins =
-        $userRepository->countAdmins() <= 1
-    ) {
-        header(
-            'Location: index.php'
-            . '?route=admin/users'
-            . '&error=last_admin'
-        );
-        exit;
-    }
-
-    $tripCount = $tripRepository->countByAuthor(
-        $userId
-    );
-
-    if ($tripCount > 0) {
-        header(
-            'Location: index.php'
-            . '?route=admin/users'
-            . '&error=has_trips'
-        );
-        exit;
-    }
-
-    $userRepository->deleteById(
-        $userId
-    );
-
-    header(
-        'Location: index.php'
-        . '?route=admin/users'
-        . '&deleted=1'
-    );
-    exit;
+    require __DIR__
+        . '/../View/admin/trips/index.php';
 }
 
 /**
  * Affiche la liste des agences.
  */
 function showAdminAgenciesPage(
-    PDO $databaseConnection,
     AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();
@@ -553,7 +89,6 @@ function showAdminAgenciesPage(
  * Affiche et traite le formulaire de création d’une agence.
  */
 function showAdminCreateAgencyPage(
-    PDO $databaseConnection,
     AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();
@@ -625,7 +160,6 @@ function showAdminCreateAgencyPage(
  * Affiche et traite le formulaire de modification d’une agence.
  */
 function showAdminEditAgencyPage(
-    PDO $databaseConnection,
     AgencyRepository $agencyRepository
 ): void {
     $currentUser = requireAdmin();

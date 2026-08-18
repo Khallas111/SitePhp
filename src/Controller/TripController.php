@@ -431,9 +431,20 @@ function deleteTripAction(
         return;
     }
 
-    $tripRepository->deleteById(
-        $tripId
-    );
+    $tripRepository->deleteById($tripId);
+
+    $returnTo = $_POST['return_to'] ?? '';
+
+    if (
+        $returnTo === 'admin/trips'
+        && $currentUser['role'] === 'ADMIN'
+    ) {
+        header(
+            'Location: index.php'
+            . '?route=admin/trips&deleted=1'
+        );
+        exit;
+    }
 
     header('Location: index.php?deleted=1');
     exit;

@@ -12,6 +12,14 @@
  * @var string $arrivalDateInput
  * @var string $totalSeatsInput
  * @var string $csrfToken
+ * @var array{
+ *     id_user: int,
+ *     first_name: string,
+ *     last_name: string,
+ *     email: string,
+ *     phone: string,
+ *     role: string
+ * } $currentUser
  */
 
 require __DIR__ . '/../partials/header.php';
@@ -52,6 +60,45 @@ require __DIR__ . '/../partials/header.php';
         <form method="post">
 
             <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+            <fieldset class="mb-4">
+                <legend class="h5 mb-3">
+                    Personne à contacter
+                </legend>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label for="contactName" class="form-label">
+                            Nom et prénom
+                        </label>
+                        <input type="text" id="contactName" class="form-control" value="<?= escape(
+                            $currentUser['first_name']
+                            . ' '
+                            . $currentUser['last_name']
+                        ) ?>" readonly>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="contactPhone" class="form-label">
+                            Téléphone
+                        </label>
+                        <input type="text" id="contactPhone" class="form-control"
+                            value="<?= escape($currentUser['phone']) ?>" readonly>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="contactEmail" class="form-label">
+                            Adresse email
+                        </label>
+                        <input type="email" id="contactEmail" class="form-control"
+                            value="<?= escape($currentUser['email']) ?>" readonly>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h2 class="h5 mb-3">
+                Informations du trajet
+            </h2>
 
             <div class="row g-3">
 
@@ -109,6 +156,7 @@ require __DIR__ . '/../partials/header.php';
                     </label>
 
                     <input type="datetime-local" id="departureDate" name="departureDate" class="form-control"
+                        min="<?= escape((new DateTimeImmutable())->format('Y-m-d\TH:i')) ?>"
                         value="<?= escape($departureDateInput) ?>" required>
                 </div>
 

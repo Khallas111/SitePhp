@@ -14,6 +14,7 @@
  *     role: string
  * }|null $currentUser
  * @var string $successMessage
+ * @var string $csrfToken
  */
 
 
@@ -22,7 +23,7 @@ require __DIR__ . '/partials/header.php';
 
 ?>
 
-<section class="mb-5">
+<section class="hero-panel mb-5">
     <h1 class="display-5 fw-bold">
         <?= escape($applicationName) ?>
     </h1>
@@ -55,7 +56,7 @@ require __DIR__ . '/partials/header.php';
         <?php foreach ($trips as $trip): ?>
 
             <div class="col-12 col-md-6 col-xl-4">
-                <article class="card h-100 shadow-sm">
+                <article class="card trip-card h-100 shadow-sm">
                     <div class="card-body">
 
                         <h3 class="card-title h5">
@@ -273,6 +274,31 @@ require __DIR__ . '/partials/header.php';
                         </div>
 
                         <div class="modal-footer">
+
+                            <?php if (
+                                canManageTrip(
+                                    $currentUser,
+                                    $trip['author_id']
+                                )
+                            ): ?>
+                                <a class="btn btn-outline-primary" href="index.php?route=trips/edit&amp;id=<?= escape(
+                                    (string) $trip['id_trip']
+                                ) ?>">
+                                    Modifier
+                                </a>
+
+                                <form method="post" action="index.php?route=trips/delete" class="m-0"
+                                    onsubmit="return confirm('Voulez-vous vraiment supprimer ce trajet ?');">
+                                    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+                                    <input type="hidden" name="trip_id" value="<?= escape(
+                                        (string) $trip['id_trip']
+                                    ) ?>">
+
+                                    <button type="submit" class="btn btn-danger">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            <?php endif; ?>
 
                             <a class="btn btn-outline-primary" href="index.php?route=trips/show&amp;id=<?= escape(
                                 (string) $trip['id_trip']

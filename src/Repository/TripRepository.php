@@ -34,6 +34,60 @@ final class TripRepository
      */
     public function findAvailableFuture(): array
     {
+        return $this->findTripList(
+            'WHERE trips.available_seats > 0
+             AND trips.departure_at > NOW()
+             ORDER BY trips.departure_at ASC'
+        );
+    }
+
+    /**
+     * Retourne tous les trajets par ordre de départ croissant.
+     *
+     * @return list<array{
+     *     id_trip: int,
+     *     departure_city: string,
+     *     departure_at: string,
+     *     arrival_city: string,
+     *     arrival_at: string,
+     *     total_seats: int,
+     *     available_seats: int,
+     *     author_id: int,
+     *     author_first_name: string,
+     *     author_last_name: string,
+     *     author_email: string,
+     *     author_phone: string
+     * }>
+     */
+    public function findAll(): array
+    {
+        return $this->findTripList(
+            'ORDER BY trips.departure_at ASC'
+        );
+    }
+
+    /**
+     * Exécute une requête de liste avec un filtre interne maîtrisé.
+     *
+     * @param string $criteria Clause SQL définie par le dépôt.
+     *
+     * @return list<array{
+     *     id_trip: int,
+     *     departure_city: string,
+     *     departure_at: string,
+     *     arrival_city: string,
+     *     arrival_at: string,
+     *     total_seats: int,
+     *     available_seats: int,
+     *     author_id: int,
+     *     author_first_name: string,
+     *     author_last_name: string,
+     *     author_email: string,
+     *     author_phone: string
+     * }>
+     */
+    private function findTripList(string $criteria): array
+    {
         $statement = $this->databaseConnection->query(
             'SELECT
             trips.id_trip,
@@ -57,9 +111,7 @@ final class TripRepository
                arrival_agency.id_agency
          INNER JOIN users
             ON trips.author_id = users.id_user
-         WHERE trips.available_seats > 0
-           AND trips.departure_at > NOW()
-         ORDER BY trips.departure_at ASC'
+         ' . $criteria
         );
 
         $trips = [];
@@ -133,24 +185,6 @@ final class TripRepository
         ]);
     }
 
-    /**
-     * Recherche les informations détaillées d’un trajet.
-     *
-     * @return array{
-     *     id_trip: int,
-     *     departure_city: string,
-     *     departure_at: string,
-     *     arrival_city: string,
-     *     arrival_at: string,
-     *     total_seats: int,
-     *     available_seats: int,
-     *     author_id: int,
-     *     author_first_name: string,
-     *     author_last_name: string,
-     *     author_email: string,
-     *     author_phone: string
-     * }|null
-     */
     /**
      * Recherche les informations détaillées d’un trajet.
      *

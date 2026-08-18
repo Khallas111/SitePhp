@@ -28,16 +28,6 @@ require __DIR__ . '/../../partials/header.php';
     Gestion des agences
 </h1>
 
-<nav class="nav nav-pills gap-2 mb-4" aria-label="Navigation de l’administration">
-    <a class="nav-link" href="index.php?route=admin/users">
-        Utilisateurs
-    </a>
-
-    <a class="nav-link" href="index.php?route=admin/agencies">
-        Agences
-    </a>
-</nav>
-
 <?php if ($successMessage !== ''): ?>
     <div class="alert alert-success" role="alert">
         <?= escape($successMessage) ?>
@@ -124,7 +114,7 @@ require __DIR__ . '/../../partials/header.php';
                                     (string) 
                                     $agency['id_agency']
                                 ) ?>" class="btn
-                                           btn-warning
+                                           btn-outline-primary
                                            btn-sm">
                                     Modifier
                                 </a>
@@ -157,18 +147,6 @@ require __DIR__ . '/../../partials/header.php';
     </div>
 
 <?php endif; ?>
-
-<p>
-    <a href="index.php?route=admin/users">
-        Gestion des utilisateurs
-    </a>
-</p>
-
-<p>
-    <a href="index.php">
-        Retour à l’accueil
-    </a>
-</p>
 
 <?php
 

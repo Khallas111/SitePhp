@@ -57,7 +57,7 @@ require __DIR__ . '/../../partials/header.php';
             autocomplete="address-level2" required>
     </div>
 
-    <button type="submit" class="btn btn-warning">
+    <button type="submit" class="btn btn-primary">
         Enregistrer les modifications
     </button>
 </form>

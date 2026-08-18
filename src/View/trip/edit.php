@@ -136,12 +136,9 @@ require __DIR__ . '/../partials/header.php';
             </div>
 
             <div class="d-flex flex-wrap gap-2 mt-4">
-               <button
-    type="submit"
-    class="btn btn-warning"
->
-    Enregistrer les modifications
-</button>
+                <button type="submit" class="btn btn-primary">
+                    Enregistrer les modifications
+                </button>
 
                 <a href="index.php" class="btn btn-outline-secondary">
                     Annuler

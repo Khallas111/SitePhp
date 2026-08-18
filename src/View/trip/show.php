@@ -148,7 +148,7 @@ require __DIR__ . '/../partials/header.php';
 
     <div class="d-flex flex-wrap gap-2 mb-4">
 
-        <a class="btn btn-warning" href="index.php?route=trips/edit&amp;id=<?= escape(
+        <a class="btn btn-outline-primary" href="index.php?route=trips/edit&amp;id=<?= escape(
             (string) $trip['id_trip']
         ) ?>">
             Modifier le trajet

@@ -1,17 +1,60 @@
-// Bootstrap
+// Palette Klaxon : toutes les variantes Bootstrap partent de ces variables.
+$klaxon-surface: #f1f8fc;
+$klaxon-primary: #0074c7;
+$klaxon-deep-blue: #00497c;
+$klaxon-text: #384050;
+$klaxon-danger: #cd2c2e;
+$klaxon-success: #82b864;
+
+$primary: $klaxon-primary;
+$secondary: $klaxon-text;
+$success: $klaxon-success;
+$info: $klaxon-surface;
+$warning: $klaxon-deep-blue;
+$danger: $klaxon-danger;
+$light: $klaxon-surface;
+$dark: $klaxon-deep-blue;
+$body-bg: $klaxon-surface;
+$body-color: $klaxon-text;
+$link-color: $klaxon-primary;
+
+// Bootstrap est importé après la personnalisation de ses variables.
 @import "bootstrap/scss/bootstrap";
 
 body {
     min-height: 100vh;
-    background-color: var(--bs-body-bg);
+    display: flex;
+    flex-direction: column;
 }
 
 main {
-    min-height: 70vh;
+    flex: 1;
+}
+
+.site-navbar {
+    background-color: $klaxon-surface;
+    border-color: rgba($klaxon-deep-blue, 0.18) !important;
 }
 
 .navbar-brand {
     letter-spacing: 0.05rem;
+    color: $klaxon-deep-blue;
+}
+
+.hero-panel {
+    padding: clamp(2rem, 5vw, 4rem);
+    color: $klaxon-surface;
+    background: linear-gradient(
+        135deg,
+        $klaxon-deep-blue,
+        $klaxon-primary
+    );
+    border-radius: 1rem;
+}
+
+.hero-panel .lead {
+    max-width: 42rem;
+    margin-bottom: 0;
 }
 
 .form-control,
@@ -19,6 +62,19 @@ main {
 .btn,
 .card {
     border-radius: 0.5rem;
+}
+
+.card {
+    border-color: rgba($klaxon-deep-blue, 0.14);
+}
+
+.trip-card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.trip-card:hover {
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.75rem 1.5rem rgba($klaxon-deep-blue, 0.12) !important;
 }
 
 .table {
@@ -38,4 +94,10 @@ main {
 .modal-header,
 .modal-footer {
     border-color: var(--bs-border-color);
+}
+
+.site-footer {
+    color: $klaxon-surface;
+    background-color: $klaxon-deep-blue;
+    border-color: $klaxon-primary !important;
 }

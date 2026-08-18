@@ -22,8 +22,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertSame([], $errors);
@@ -35,8 +35,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '1',
             '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -48,8 +48,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             '0',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -61,8 +61,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             '-5',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -74,8 +74,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             'quatre',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -87,8 +87,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             '4',
-            '2026-08-20T10:30',
-            '2026-08-20T08:30'
+            '2099-08-20T10:30',
+            '2099-08-20T08:30'
         );
 
         self::assertNotEmpty($errors);
@@ -100,8 +100,8 @@ final class TripValidatorTest extends TestCase
             '1',
             '2',
             '4',
-            '2026-08-20T10:30',
-            '2026-08-20T10:30'
+            '2099-08-20T10:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -114,7 +114,7 @@ final class TripValidatorTest extends TestCase
             '2',
             '4',
             'bonjour',
-            '2026-08-20T10:30'
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -125,8 +125,8 @@ final class TripValidatorTest extends TestCase
             'bonjour',
             '2',
             '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);
@@ -138,8 +138,34 @@ final class TripValidatorTest extends TestCase
             '0',
             '2',
             '4',
-            '2026-08-20T08:30',
-            '2026-08-20T10:30'
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
+        );
+
+        self::assertNotEmpty($errors);
+    }
+
+    public function testRejectsDepartureInThePast(): void
+    {
+        $errors = $this->tripValidator->validate(
+            '1',
+            '2',
+            '4',
+            '2020-08-20T08:30',
+            '2020-08-20T10:30'
+        );
+
+        self::assertNotEmpty($errors);
+    }
+
+    public function testRejectsMoreThan255Seats(): void
+    {
+        $errors = $this->tripValidator->validate(
+            '1',
+            '2',
+            '256',
+            '2099-08-20T08:30',
+            '2099-08-20T10:30'
         );
 
         self::assertNotEmpty($errors);

@@ -74,33 +74,21 @@ match ($route) {
         $userRepository
     ),
 
-    'admin/users/create' =>
-    showAdminCreateUserPage(
-        $userRepository
-    ),
-    'admin/users/edit' => showAdminEditUserPage(
-        $userRepository
-    ),
-
-    'admin/users/delete' =>
-    deleteAdminUserAction(
-        $userRepository,
+    'admin', 'admin/trips' =>
+    showAdminTripsPage(
         $tripRepository
     ),
 
     'admin/agencies' =>
     showAdminAgenciesPage(
-        $databaseConnection,
         $agencyRepository
     ),
 
     'admin/agencies/create' => showAdminCreateAgencyPage(
-        $databaseConnection,
         $agencyRepository
     ),
 
     'admin/agencies/edit' => showAdminEditAgencyPage(
-        $databaseConnection,
         $agencyRepository
     ),
 
