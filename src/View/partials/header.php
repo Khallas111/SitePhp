@@ -14,6 +14,14 @@
  * }|null $currentUser
  */
 
+$isAdmin =
+    $currentUser !== null
+    && $currentUser['role'] === 'ADMIN';
+
+$brandUrl = $isAdmin
+    ? 'index.php?route=admin/trips'
+    : 'index.php';
+
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +29,6 @@
 
 <head>
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
@@ -35,11 +42,9 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg
-               bg-body-tertiary border-bottom">
+        <nav class="navbar navbar-expand-lg site-navbar border-bottom">
             <div class="container">
-
-                <a class="navbar-brand fw-bold" href="index.php">
+                <a class="navbar-brand fw-bold" href="<?= escape($brandUrl) ?>">
                     <?= escape($applicationName) ?>
                 </a>
 
@@ -49,82 +54,75 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
-                    <ul class="navbar-nav ms-auto
-                           mb-2 mb-lg-0
-                           align-items-lg-center">
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php">
-                                Accueil
-                            </a>
-                        </li>
-
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
                         <?php if ($currentUser === null): ?>
-
                             <li class="nav-item ms-lg-2">
                                 <a class="btn btn-primary" href="index.php?route=login">
                                     Connexion
                                 </a>
                             </li>
-
-                        <?php else: ?>
+                        <?php elseif ($isAdmin): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?route=admin/trips">
+                                    Trajets
+                                </a>
+                            </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="index.php?route=trips/create">
+                                <a class="nav-link" href="index.php?route=admin/users">
+                                    Utilisateurs
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?route=admin/agencies">
+                                    Agences
+                                </a>
+                            </li>
+
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-primary" href="index.php?route=trips/create">
+                                    Nouveau trajet
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <form method="post" action="index.php?route=logout" class="m-0">
+                                    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
+
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="btn btn-primary" href="index.php?route=trips/create">
                                     Proposer un trajet
                                 </a>
                             </li>
 
-                            <?php if (
-                                $currentUser['role'] === 'ADMIN'
-                            ): ?>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="index.php?route=admin/users">
-                                        Utilisateurs
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="index.php?route=admin/agencies">
-                                        Agences
-                                    </a>
-                                </li>
-
-                            <?php endif; ?>
-
                             <li class="nav-item">
                                 <span class="navbar-text px-lg-3">
-                                    <?= escape(
-                                        $currentUser['first_name']
-                                    ) ?>
-
-                                    <?= escape(
-                                        $currentUser['last_name']
-                                    ) ?>
+                                    <?= escape($currentUser['first_name']) ?>
+                                    <?= escape($currentUser['last_name']) ?>
                                 </span>
                             </li>
 
                             <li class="nav-item">
                                 <form method="post" action="index.php?route=logout" class="m-0">
-                                    <input type="hidden" name="csrf_token" value="<?= escape(
-                                        $csrfToken
-                                    ) ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
-                                    <button type="submit" class="btn
-                                           btn-outline-secondary">
+                                    <button type="submit" class="btn btn-outline-secondary">
                                         Déconnexion
                                     </button>
                                 </form>
                             </li>
-
                         <?php endif; ?>
-
                     </ul>
                 </div>
-
             </div>
         </nav>
     </header>
 
-    <main class="container py-4">
+    <main class="container py-5">

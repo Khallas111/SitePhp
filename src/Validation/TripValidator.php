@@ -53,6 +53,9 @@ final class TripValidator
         } elseif ((int) $totalSeatsInput < 1) {
             $errors[] =
                 'Le nombre total de places doit être supérieur à zéro.';
+        } elseif ((int) $totalSeatsInput > 255) {
+            $errors[] =
+                'Le nombre total de places ne peut pas dépasser 255.';
         }
 
         $departureDate = null;
@@ -87,6 +90,14 @@ final class TripValidator
         ) {
             $errors[] =
                 'L’arrivée doit avoir lieu après le départ.';
+        }
+
+        if (
+            $departureDate !== null
+            && $departureDate <= new \DateTimeImmutable()
+        ) {
+            $errors[] =
+                'Le départ doit avoir lieu dans le futur.';
         }
 
         return $errors;

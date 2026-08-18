@@ -49,8 +49,8 @@ INSERT INTO agencies (
 ) VALUES
     (
         1,
-        '2026-08-05 08:30:00',
-        '2026-08-05 10:15:00',
+        DATE_ADD(CURRENT_DATE, INTERVAL 2 DAY) + INTERVAL 8 HOUR + INTERVAL 30 MINUTE,
+        DATE_ADD(CURRENT_DATE, INTERVAL 2 DAY) + INTERVAL 10 HOUR + INTERVAL 15 MINUTE,
         4,
         3,
         2,
@@ -59,8 +59,8 @@ INSERT INTO agencies (
     ),
     (
         2,
-        '2026-08-06 09:00:00',
-        '2026-08-06 11:30:00',
+        DATE_ADD(CURRENT_DATE, INTERVAL 4 DAY) + INTERVAL 9 HOUR,
+        DATE_ADD(CURRENT_DATE, INTERVAL 4 DAY) + INTERVAL 11 HOUR + INTERVAL 30 MINUTE,
         5,
         2,
         2,
@@ -69,8 +69,8 @@ INSERT INTO agencies (
     ),
     (
         3,
-        '2026-08-07 14:00:00',
-        '2026-08-07 16:30:00',
+        DATE_ADD(CURRENT_DATE, INTERVAL 6 DAY) + INTERVAL 14 HOUR,
+        DATE_ADD(CURRENT_DATE, INTERVAL 6 DAY) + INTERVAL 16 HOUR + INTERVAL 30 MINUTE,
         4,
         0,
         1,
@@ -79,8 +79,8 @@ INSERT INTO agencies (
     ),
     (
         4,
-        '2026-08-08 07:45:00',
-        '2026-08-08 08:45:00',
+        DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY) + INTERVAL 7 HOUR + INTERVAL 45 MINUTE,
+        DATE_SUB(CURRENT_DATE, INTERVAL 2 DAY) + INTERVAL 8 HOUR + INTERVAL 45 MINUTE,
         4,
         1,
         2,
