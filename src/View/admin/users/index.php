@@ -31,7 +31,7 @@ require __DIR__ . '/../../partials/header.php';
 </h1>
 
 <p class="text-body-secondary mb-4">
-    Les employés proviennent du système RH et sont disponibles en lecture seule.
+    Liste des employés
 </p>
 
 <div class="d-flex flex-wrap
